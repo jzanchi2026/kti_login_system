@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  db:
+    build: ./db
+    image: antonion20/db:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: google_users
+    ports:
+      - "3306:3306"
+    restart: always
+  web:
+    build: ./backend
+    image: antonion20/web:latest
+    environment:
+      MYSQL_DATABASE: google_users
+      MYSQL_USER: root
+      MYSQL_PASSWORD: pass
+      MYSQL_HOST: db
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
