@@ -10,6 +10,9 @@ const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
 
+//my libraries
+const tools = require("./libraries/tools.js")
+
 const initializePassport = require('./passport-config')
 initializePassport(
   passport,
