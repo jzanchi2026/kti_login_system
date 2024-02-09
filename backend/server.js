@@ -13,18 +13,6 @@ const methodOverride = require('method-override')
 //my libraries
 const tools = require("./libraries/tools.js")
 
-const mysql = require('mysql-await')
-
-console.log(process.env.MYSQL_DATABASE)
-
-var db = mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    port: '3306',
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE
-});
-
 const initializePassport = require('./passport-config')
 initializePassport(passport,
     email = async (email) => {
@@ -103,10 +91,10 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 
 app.delete('/logout', (req, res, next) => {
     req.logOut((err) => {
-        if (err) {
-            return next(err);
-        }
-        res.redirect('/login');
+      if (err) {
+        return next(err);
+      }
+      res.redirect('/login');
     });
 });
 
