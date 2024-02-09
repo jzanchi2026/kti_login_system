@@ -1,3 +1,5 @@
+-- user: ktinventory
+-- pwd: Keefe!2024!Invent
 DROP DATABASE IF EXISTS ktinventory;
 CREATE DATABASE ktinventory;
 USE ktinventory;
