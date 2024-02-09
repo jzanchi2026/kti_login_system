@@ -12,6 +12,7 @@ const methodOverride = require('method-override')
 
 //my libraries
 const tools = require("./libraries/tools.js")
+const sql = require("./libraries/sql.js")
 
 const initializePassport = require('./passport-config')
 initializePassport(
@@ -55,12 +56,12 @@ app.get('/register', checkNotAuthenticated, (req, res) => {
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    users.push({
-      id: Date.now().toString(),
-      name: req.body.name,
-      email: req.body.email,
-      password: hashedPassword
-    })
+    let conn = sql.newSQLConnection();
+    if (!conn) {
+      conn.end();
+      throw Error("No SQL connection made");
+    }
+    conn.query(`INSERT INTO idAccount (username, email, userPassword, userType) VALUES (?, ?, ?, 1)`, [req.body.name, req.body.email, hashedPassword])
     res.redirect('/login')
   } catch {
     res.redirect('/register')
@@ -68,12 +69,12 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 })
 
 app.delete('/logout', (req, res, next) => {
-    req.logOut((err) => {
-      if (err) {
-        return next(err);
-      }
-      res.redirect('/login');
-    });
+  req.logOut((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/login');
+  });
 });
 
 function checkAuthenticated(req, res, next) {
