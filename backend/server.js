@@ -70,6 +70,22 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 app.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('register.ejs')
 })
+app.get('/tools', checkNotAuthenticated, (req, res) => {
+    res.render('tools.ejs', {
+        tools: [
+            { name: "tool 1", id: 1 },
+            { name: "tool 2", id: 2 },
+            { name: "tool 3", id: 3 }
+        ]
+    })
+})
+
+app.get('/tool', checkNotAuthenticated, (req, res) => {
+    res.render('tool.ejs', {
+        name: "tool "+ req.query.id,
+        id: req.query.id
+    })
+})
 
 app.get('/aproval', async (req, res) => {
     let sql = 'SELECT * FROM users WHERE userType = 0';
@@ -116,10 +132,10 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 
 app.delete('/logout', (req, res, next) => {
     req.logOut((err) => {
-      if (err) {
-        return next(err);
-      }
-      res.redirect('/login');
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/login');
     });
 });
 

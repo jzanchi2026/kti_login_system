@@ -1,1 +1,5 @@
 <h1>Tools</h1>
+
+<% for(let i = 0; i<tools.length; i++){ %>
+    <p><a href="tool?id=<%= tools[i].id %>"><%= tools[i].name %> </a></p>
+<% } %>
