@@ -8,7 +8,7 @@ services:
       - "./backend/init.sql:/docker-entrypoint-initdb.d/1.sql"
     environment:
       MYSQL_ROOT_PASSWORD: pass
-      MYSQL_DATABASE: google_users
+      MYSQL_DATABASE: ktinventory
     ports:
       - "3306:3306"
     restart: always
@@ -16,7 +16,7 @@ services:
     build: ./backend
     image: antonion20/web:latest
     environment:
-      MYSQL_DATABASE: google_users
+      MYSQL_DATABASE: ktinventory
       MYSQL_USER: root
       MYSQL_PASSWORD: pass
       MYSQL_HOST: db

@@ -1,16 +1,17 @@
 -- user: ktinventory
 -- pwd: Keefe!2024!Invent
+-- User types: 0 - Aproval required, 1 - Aproved student, 2 - Teacher
 DROP DATABASE IF EXISTS ktinventory;
 CREATE DATABASE ktinventory;
 USE ktinventory;
 CREATE TABLE users(
-    id int NOT NULL AUTO_INCREMENT,
+    userid VARCHAR(100) not null,
     displayName VARCHAR(20) not null,
     email VARCHAR(50) not null,
     hashPass VARCHAR(96) not null,
     userType int not null,
     classId int,
-    userid VARCHAR(100) not null,
+    id int NOT NULL AUTO_INCREMENT,
     PRIMARY KEY(id)
 );
 CREATE TABLE idClass(

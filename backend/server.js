@@ -35,7 +35,7 @@ initializePassport(passport,
     },
     id = async (id) => {
         //users.find(user => user.email === email)
-        let sql = 'SELECT * FROM users WHERE id = ?';
+        let sql = 'SELECT * FROM users WHERE userid = ?';
         let user = await db.awaitQuery(sql, [id]);
         return user[0];
     }
@@ -72,26 +72,36 @@ app.get('/register', checkNotAuthenticated, (req, res) => {
 })
 
 app.get('/aproval', async (req, res) => {
-    let sql = 'SELECT * FROM aproval';
+    let sql = 'SELECT * FROM users WHERE userType = 0';
     let users = await db.awaitQuery(sql);
 
-    res.render('aproval.ejs', {users: JSON.stringify(users)});
+    res.render('aproval.ejs', {users: users});
 })
 
 app.post('/aproval/', async (req, res) => {
-    let id = req.body.id;
+    let id = req.body.aproveid;
+
+    console.log(id);
+
+    let sql = 'UPDATE users SET userType = 1 WHERE userid = ?';
+    db.query(sql, id, (error, result) => {
+        if (error) throw error;
+    });
+
+    res.end();
 })
 
 app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
-        let sql = 'INSERT INTO aproval SET ?';
+        let sql = 'INSERT INTO users SET ?';
         let user = {
             userid: Date.now().toString(),
             displayName: req.body.name,
             email: req.body.email,
             hashPass: hashedPassword,
+            userType: 0,
         };
 
         db.query(sql, user, (error, result) => {

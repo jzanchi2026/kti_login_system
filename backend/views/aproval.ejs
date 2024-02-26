@@ -1,5 +1,14 @@
 <h1>Hi <%= users %></h1>
 <form action="/aproval" method="POST">
     
-    <button type="submit" name="id" value="">Log Out</button>
+    <table>
+        <% for(var i=0; i < users.length; i++) { %>
+            <tr>
+                <td><%= users[i].userid %></td>
+                <td><%= users[i].displayName %></td>
+                <td><%= users[i].email %></td>
+                <td><button type="submit" name="aproveid" value='<%= users[i].userid %>'>Aprove</button></td>
+            </tr>
+        <% } %>
+    </table>
 </form>
