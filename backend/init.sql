@@ -3,13 +3,14 @@
 DROP DATABASE IF EXISTS ktinventory;
 CREATE DATABASE ktinventory;
 USE ktinventory;
-CREATE TABLE idAccount(
-    userName VARCHAR(20) not null,
-    email VARCHAR(50) not null,
-    userPassword VARCHAR(20) not null,
-    userType BOOLEAN not null,
-    classId int,
+CREATE TABLE users(
     id int NOT NULL AUTO_INCREMENT,
+    displayName VARCHAR(20) not null,
+    email VARCHAR(50) not null,
+    hashPass VARCHAR(96) not null,
+    userType int not null,
+    classId int,
+    userid VARCHAR(100) not null,
     PRIMARY KEY(id)
 );
 CREATE TABLE idClass(

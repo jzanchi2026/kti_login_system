@@ -5,7 +5,7 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     image: antonion20/db:latest
     volumes:
-      - "./db/testdump.sql:/docker-entrypoint-initdb.d/1.sql"
+      - "./backend/init.sql:/docker-entrypoint-initdb.d/1.sql"
     environment:
       MYSQL_ROOT_PASSWORD: pass
       MYSQL_DATABASE: google_users

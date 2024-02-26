@@ -3,13 +3,13 @@ const bcrypt = require('bcrypt')
 
 function initialize(passport, getUserByEmail, getUserById) {
   const authenticateUser = async (email, password, done) => {
-    const user = getUserByEmail(email)
+    const user = await getUserByEmail(email)
     if (user == null) {
       return done(null, false, { message: 'No user with that email' })
     }
-
     try {
-      if (await bcrypt.compare(password, user.password)) {
+        // Check if user does not have the usertype of aproval
+      if (await bcrypt.compare(password, user.hashPass)) {
         return done(null, user)
       } else {
         return done(null, false, { message: 'Password incorrect' })

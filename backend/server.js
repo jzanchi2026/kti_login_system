@@ -13,6 +13,17 @@ const methodOverride = require('method-override')
 //my libraries
 const tools = require("./libraries/tools.js")
 
+const mysql = require('mysql-await')
+
+console.log(process.env.MYSQL_DATABASE)
+var db = mysql.createConnection({
+    host: process.env.MYSQL_HOST,
+    port: '3306',
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE
+});
+
 const initializePassport = require('./passport-config')
 initializePassport(passport,
     email = async (email) => {
@@ -67,6 +78,10 @@ app.get('/aproval', async (req, res) => {
     res.render('aproval.ejs', {users: JSON.stringify(users)});
 })
 
+app.post('/aproval/', async (req, res) => {
+    let id = req.body.id;
+})
+
 app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
@@ -76,7 +91,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             userid: Date.now().toString(),
             displayName: req.body.name,
             email: req.body.email,
-            password: hashedPassword,
+            hashPass: hashedPassword,
         };
 
         db.query(sql, user, (error, result) => {
