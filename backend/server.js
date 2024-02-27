@@ -70,31 +70,53 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 app.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('register.ejs')
 })
-app.get('/tools', checkNotAuthenticated, (req, res) => {
-    res.render('tools.ejs', {
-        tools: [
-            { name: "tool 1", id: 1 },
-            { name: "tool 2", id: 2 },
-            { name: "tool 3", id: 3 }
-        ]
-    })
+app.get('/addTool', checkNotAuthenticated, (req, res) => {
+    res.render('addTool.ejs')
+})
+app.get('/tools', checkNotAuthenticated, async (req, res) => {
+    let sql = 'SELECT toolName, toolTypeId from tool';
+    let tools = await db.awaitQuery(sql);
+    res.render('tools.ejs', {tools: tools})
 })
 
-app.get('/tool', checkNotAuthenticated, (req, res) => {
-    res.render('tool.ejs', {
-        name: "tool "+ req.query.id,
-        id: req.query.id
-    })
+app.get('/tool', checkNotAuthenticated, async (req, res) => {
+    let sql = 'SELECT toolName FROM tool WHERE toolTypeId = ?';
+    
+    let toolName = await db.awaitQuery(sql,req.query.id);
+    if(toolName.length < 1){
+        res.redirect("/tools")
+    }else{
+        res.render('tool.ejs', {
+            name: toolName[0].toolName
+        })
+    }
 })
 
-app.get('/aproval', async (req, res) => {
+app.get('/approval', async (req, res) => {
     let sql = 'SELECT * FROM users WHERE userType = 0';
     let users = await db.awaitQuery(sql);
 
-    res.render('aproval.ejs', {users: users});
+    res.render('approval.ejs', { users: users });
 })
 
-app.post('/aproval/', async (req, res) => {
+app.post('/addTool/', async (req, res) => {
+    let id = req.body;
+    
+    console.log(JSON.stringify(req.body));
+    let sql = "INSERT INTO tool SET ?"
+    let tool = {
+        toolName: req.body.toolName,
+        amount: 0
+    }
+
+    db.query(sql, tool, (error, result) => {
+        if (error) throw error;
+    });
+
+    res.redirect("/tools");
+})
+
+app.post('/approval/', async (req, res) => {
     let id = req.body.aproveid;
 
     console.log(id);
@@ -104,7 +126,7 @@ app.post('/aproval/', async (req, res) => {
         if (error) throw error;
     });
 
-    res.redirect("/aproval");
+    res.redirect("/approval");
 })
 
 app.post('/register', checkNotAuthenticated, async (req, res) => {
