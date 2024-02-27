@@ -28,7 +28,7 @@ const initializePassport = require('./passport-config')
 initializePassport(passport,
     email = async (email) => {
         //users.find(user => user.email === email)
-        let sql = 'SELECT * FROM users WHERE email = ?';
+        let sql = 'SELECT * FROM users WHERE email = ? AND userType = 1';
         let user = await db.awaitQuery(sql, [email]);
         console.log(user);
         return user[0];
@@ -104,7 +104,7 @@ app.post('/aproval/', async (req, res) => {
         if (error) throw error;
     });
 
-    res.end();
+    res.redirect("/aproval");
 })
 
 app.post('/register', checkNotAuthenticated, async (req, res) => {
