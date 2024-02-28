@@ -70,31 +70,57 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 app.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('register.ejs')
 })
-app.get('/tools', checkNotAuthenticated, (req, res) => {
+app.get('/addTool', checkAdmin, (req, res) => {
+    res.render('addTool.ejs')
+})
+app.get('/tools', checkAuthenticated, async (req, res) => {
+    let sql = 'SELECT toolName, toolTypeId from tool';
+    let tools = await db.awaitQuery(sql);
     res.render('tools.ejs', {
-        tools: [
-            { name: "tool 1", id: 1 },
-            { name: "tool 2", id: 2 },
-            { name: "tool 3", id: 3 }
-        ]
+        tools: tools,
+        admin: req.body.userType > 1
     })
 })
 
-app.get('/tool', checkNotAuthenticated, (req, res) => {
-    res.render('tool.ejs', {
-        name: "tool "+ req.query.id,
-        id: req.query.id
-    })
+app.get('/tool', checkAuthenticated, async (req, res) => {
+    let sql = 'SELECT toolName FROM tool WHERE toolTypeId = ?';
+
+    let toolName = await db.awaitQuery(sql, req.query.id);
+    if (toolName.length < 1) {
+        res.redirect("/tools")
+    } else {
+        res.render('tool.ejs', {
+            name: toolName[0].toolName,
+            admin: req.body.userType > 1
+        })
+    }
 })
 
-app.get('/aproval', checkNotAuthenticated, async (req, res) => {
+app.get('/approval', checkNotAuthenticated, async (req, res) => {
     let sql = 'SELECT * FROM users WHERE userType = 0';
     let users = await db.awaitQuery(sql);
 
-    res.render('aproval.ejs', {users: users});
+    res.render('approval.ejs', { users: users });
 })
 
-app.post('/aproval/', async (req, res) => {
+app.post('/addTool/', async (req, res) => {
+    let id = req.body;
+
+    console.log(JSON.stringify(req.body));
+    let sql = "INSERT INTO tool SET ?"
+    let tool = {
+        toolName: req.body.toolName,
+        amount: 0
+    }
+
+    db.query(sql, tool, (error, result) => {
+        if (error) throw error;
+    });
+
+    res.redirect("/tools");
+})
+
+app.post('/approval/', async (req, res) => {
     let id = req.body.aproveid;
 
     console.log(id);
@@ -104,7 +130,7 @@ app.post('/aproval/', async (req, res) => {
         if (error) throw error;
     });
 
-    res.redirect("/aproval");
+    res.redirect("/approval");
 })
 
 app.post('/register', checkNotAuthenticated, async (req, res) => {
@@ -145,6 +171,13 @@ function checkAuthenticated(req, res, next) {
     }
 
     res.redirect('/login')
+}
+function checkAdmin(req, res, next) {
+    if (req.isAuthenticated() && req.body.userType >= 2) {
+        return next()
+    }
+
+    res.redirect('/')
 }
 
 function checkNotAuthenticated(req, res, next) {
