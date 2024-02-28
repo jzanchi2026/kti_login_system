@@ -1,5 +1,7 @@
 <h1>Tools</h1>
+<% if(admin){ %>
 <a href="/addTool">Add New Tool</a>
+<% } %>
 <% for(let i = 0; i<tools.length; i++){ %>
     <p><a href="tool?id=<%= tools[i].toolTypeId %>"><%= tools[i].toolName %> </a></p>
 <% } %>

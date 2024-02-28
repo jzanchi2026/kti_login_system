@@ -70,24 +70,28 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 app.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('register.ejs')
 })
-app.get('/addTool', checkNotAuthenticated, (req, res) => {
+app.get('/addTool', checkAdmin, (req, res) => {
     res.render('addTool.ejs')
 })
-app.get('/tools', checkNotAuthenticated, async (req, res) => {
+app.get('/tools', checkAuthenticated, async (req, res) => {
     let sql = 'SELECT toolName, toolTypeId from tool';
     let tools = await db.awaitQuery(sql);
-    res.render('tools.ejs', {tools: tools})
+    res.render('tools.ejs', {
+        tools: tools,
+        admin: req.body.userType > 1
+    })
 })
 
-app.get('/tool', checkNotAuthenticated, async (req, res) => {
+app.get('/tool', checkAuthenticated, async (req, res) => {
     let sql = 'SELECT toolName FROM tool WHERE toolTypeId = ?';
-    
-    let toolName = await db.awaitQuery(sql,req.query.id);
-    if(toolName.length < 1){
+
+    let toolName = await db.awaitQuery(sql, req.query.id);
+    if (toolName.length < 1) {
         res.redirect("/tools")
-    }else{
+    } else {
         res.render('tool.ejs', {
-            name: toolName[0].toolName
+            name: toolName[0].toolName,
+            admin: req.body.userType > 1
         })
     }
 })
@@ -101,7 +105,7 @@ app.get('/approval', async (req, res) => {
 
 app.post('/addTool/', async (req, res) => {
     let id = req.body;
-    
+
     console.log(JSON.stringify(req.body));
     let sql = "INSERT INTO tool SET ?"
     let tool = {
@@ -167,6 +171,13 @@ function checkAuthenticated(req, res, next) {
     }
 
     res.redirect('/login')
+}
+function checkAdmin(req, res, next) {
+    if (req.isAuthenticated() && req.body.userType >= 2) {
+        return next()
+    }
+
+    res.redirect('/')
 }
 
 function checkNotAuthenticated(req, res, next) {
