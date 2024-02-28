@@ -87,7 +87,7 @@ app.get('/tool', checkNotAuthenticated, (req, res) => {
     })
 })
 
-app.get('/aproval', async (req, res) => {
+app.get('/aproval', checkNotAuthenticated, async (req, res) => {
     let sql = 'SELECT * FROM users WHERE userType = 0';
     let users = await db.awaitQuery(sql);
 
