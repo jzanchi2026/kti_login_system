@@ -28,7 +28,7 @@ const initializePassport = require('./passport-config')
 initializePassport(passport,
     email = async (email) => {
         //users.find(user => user.email === email)
-        let sql = 'SELECT * FROM users WHERE email = ? AND userType = 1';
+        let sql = 'SELECT * FROM users WHERE email = ? AND userType > 0';
         let user = await db.awaitQuery(sql, [email]);
         console.log(user);
         return user[0];
@@ -54,7 +54,8 @@ app.use(passport.session())
 app.use(methodOverride('_method'))
 
 app.get('/', checkAuthenticated, (req, res) => {
-    res.render('index.ejs', { name: req.user.name })
+    console.log(JSON.stringify(req.user))
+    res.render('index.ejs', { name: JSON.stringify(req.user) })
 })
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
@@ -81,6 +82,14 @@ app.get('/tools', checkAuthenticated, async (req, res) => {
         admin: req.body.userType > 1
     })
 })
+app.get('/materials', checkAuthenticated, async (req, res) => {
+    let sql = 'SELECT materialName, materialId from material';
+    let materials = await db.awaitQuery(sql);
+    res.render('materials.ejs', {
+        materials: materials,
+        admin: req.body.userType > 1
+    })
+})
 
 app.get('/tool', checkAuthenticated, async (req, res) => {
     let sql = 'SELECT toolName FROM tool WHERE toolTypeId = ?';
@@ -103,10 +112,14 @@ app.get('/approval', async (req, res) => {
     res.render('approval.ejs', { users: users });
 })
 
-app.post('/addTool/', async (req, res) => {
-    let id = req.body;
+app.get('/users', async (req, res) => {
+    let sql = 'SELECT * FROM users';
+    let users = await db.awaitQuery(sql);
 
-    console.log(JSON.stringify(req.body));
+    res.render('users.ejs', { users: users, admin: false });
+})
+
+app.post('/addTool/', async (req, res) => {
     let sql = "INSERT INTO tool SET ?"
     let tool = {
         toolName: req.body.toolName,
@@ -120,12 +133,26 @@ app.post('/addTool/', async (req, res) => {
     res.redirect("/tools");
 })
 
+app.post('/addMaterial/', async (req, res) => {
+    let sql = "INSERT INTO material SET ?"
+    let material = {
+        materialName: req.body.materialName,
+        amount: 0
+    }
+
+    db.query(sql, tool, (error, result) => {
+        if (error) throw error;
+    });
+
+    res.redirect("/materials");
+})
+
 app.post('/approval/', async (req, res) => {
     let id = req.body.aproveid;
 
     console.log(id);
 
-    let sql = 'UPDATE users SET userType = 1 WHERE userid = ?';
+    let sql = 'UPDATE users SET userType = 2 WHERE userid = ?';
     db.query(sql, id, (error, result) => {
         if (error) throw error;
     });

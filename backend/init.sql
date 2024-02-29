@@ -7,7 +7,7 @@ USE ktinventory;
 CREATE TABLE users(
     userid VARCHAR(100) not null,
     displayName VARCHAR(20) not null,
-    email VARCHAR(50) not null,
+    email VARCHAR(50) not null unique,
     hashPass VARCHAR(96) not null,
     userType int not null,
     classId int,
@@ -49,7 +49,7 @@ CREATE TABLE toolHistory(
     accountId int not null,
     timeTaken DATETIME not null,
     expireTime DATETIME not null,
-    toolId int not null AUTO_INCREMENT,
+    toolId int not null, --AUTO_INCREMENT,
     constraint toolTypeConstraint2
     foreign key (toolTypeId) references tool(toolTypeId) on delete cascade,
     constraint toolHistoryAccount

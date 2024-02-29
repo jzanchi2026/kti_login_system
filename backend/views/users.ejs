@@ -1,0 +1,10 @@
+<h1>Users</h1>
+<% if(admin){ %>
+    <p>You're an admin!</p>
+<% } %>
+<% for(let i = 0; i<users.length; i++){ %>
+    <h3><%= users[i].displayName %></h3>
+    <p><%= users[i].email %></p>
+    <% let tiers = ["Unapproved","User","Admin","Superuser"] %> 
+    <p><%= tiers[users[i].userType] %></p>
+<% } %>
