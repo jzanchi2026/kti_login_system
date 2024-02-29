@@ -71,6 +71,15 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 app.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('register.ejs')
 })
+
+app.get('/viewAdmins', checkNotAuthenticated, async (req, res) => {
+    let sql = 'SELECT displayName FROM users WHERE userType = 2';
+    let admins = await db.awaitQuery(sql);
+    res.render('viewAdmins.ejs', {
+        admins: admins
+    });
+})
+
 app.get('/addTool', checkAdmin, (req, res) => {
     res.render('addTool.ejs')
 })
@@ -105,7 +114,7 @@ app.get('/tool', checkAuthenticated, async (req, res) => {
     }
 })
 
-app.get('/approval', async (req, res) => {
+app.get('/approval', checkNotAuthenticated, async (req, res) => {
     let sql = 'SELECT * FROM users WHERE userType = 0';
     let users = await db.awaitQuery(sql);
 
