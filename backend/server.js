@@ -70,6 +70,15 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 app.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('register.ejs')
 })
+
+app.get('/viewAdmins', checkNotAuthenticated, async (req, res) => {
+    let sql = 'SELECT displayName FROM users WHERE userType = 2';
+    let admins = await db.awaitQuery(sql);
+    res.render('viewAdmins.ejs', {
+        admins: admins
+    });
+})
+
 app.get('/addTool', checkAdmin, (req, res) => {
     res.render('addTool.ejs')
 })
