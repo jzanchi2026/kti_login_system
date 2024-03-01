@@ -1,0 +1,7 @@
+<h1>Materials</h1>
+<% if(admin){ %>
+<a href="/addMaterial">Add New Tool</a>
+<% } %>
+<% for(let i = 0; i<materials.length; i++){ %>
+    <p><a href="tool?id=<%= materials[i].materialId %>"><%= tools[i].materialName %> </a></p>
+<% } %>
