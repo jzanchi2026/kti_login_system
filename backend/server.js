@@ -28,9 +28,9 @@ const initializePassport = require('./passport-config')
 initializePassport(passport,
     email = async (email) => {
         //users.find(user => user.email === email)
-        let sql = 'SELECT * FROM users WHERE email = ? AND userType = 1';
+        let sql = 'SELECT * FROM users WHERE email = ? AND userType >= 1';
         let user = await db.awaitQuery(sql, [email]);
-        console.log(user);
+        console.log("User: " + JSON.stringify(user[0]));
         return user[0];
     },
     id = async (id) => {
@@ -54,7 +54,10 @@ app.use(passport.session())
 app.use(methodOverride('_method'))
 
 app.get('/', checkAuthenticated, (req, res) => {
-    res.render('index.ejs', { name: req.user.name })
+    console.log("body user" + req.body.user);
+    console.log("req user" + req.user);
+
+    res.render('index.ejs', { name: req.user.displayName })
 })
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
@@ -66,6 +69,14 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     failureRedirect: '/login',
     failureFlash: true
 }))
+
+app.post('/test2', async (req, res) => {
+    let id = req.body.id;
+
+    console.log(id);
+
+    res.end(200);
+})
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('register.ejs')

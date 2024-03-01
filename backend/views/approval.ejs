@@ -1,5 +1,5 @@
 <h1>Hi <%= users %></h1>
-<form action="/aproval" method="POST">
+<form action="/approval" method="POST">
     
     <table>
         <% for(var i=0; i < users.length; i++) { %>
@@ -7,7 +7,7 @@
                 <td><%= users[i].userid %></td>
                 <td><%= users[i].displayName %></td>
                 <td><%= users[i].email %></td>
-                <td><button type="submit" name="aproveid" value='<%= users[i].userid %>'>Aprove</button></td>
+                <td><button type="submit" name="aproveid" value='<%= users[i].userid %>'>Approve</button></td>
             </tr>
         <% } %>
     </table>

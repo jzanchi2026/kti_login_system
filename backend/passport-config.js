@@ -10,6 +10,7 @@ function initialize(passport, getUserByEmail, getUserById) {
     try {
         // Check if user does not have the usertype of aproval
       if (await bcrypt.compare(password, user.hashPass)) {
+        console.log("Bcrypt code, user: " + JSON.stringify(user));
         return done(null, user)
       } else {
         return done(null, false, { message: 'Password incorrect' })
@@ -20,10 +21,11 @@ function initialize(passport, getUserByEmail, getUserById) {
   }
 
   passport.use(new LocalStrategy({ usernameField: 'email' }, authenticateUser))
-  passport.serializeUser((user, done) => done(null, user.id))
-  passport.deserializeUser((id, done) => {
-    return done(null, getUserById(id))
-  })
+  passport.serializeUser((user, done) => done(null, user.userid))
+  passport.deserializeUser(async (id, done) => {
+    const user = await getUserById(id);
+    return done(null, user);
+  });
 }
 
 module.exports = initialize
