@@ -82,7 +82,7 @@ app.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('register.ejs')
 })
 
-app.get('/viewAdmins', checkNotAuthenticated, async (req, res) => {
+app.get('/viewAdmins', checkAdmin, async (req, res) => {
     let sql = 'SELECT displayName FROM users WHERE userType = 2';
     let admins = await db.awaitQuery(sql);
     res.render('viewAdmins.ejs', {
@@ -93,12 +93,15 @@ app.get('/viewAdmins', checkNotAuthenticated, async (req, res) => {
 app.get('/addTool', checkAdmin, (req, res) => {
     res.render('addTool.ejs')
 })
+app.get('/addMaterial', checkAdmin, (req, res) => {
+    res.render('addMaterial.ejs')
+})
 app.get('/tools', checkAuthenticated, async (req, res) => {
     let sql = 'SELECT toolName, toolTypeId from tool';
     let tools = await db.awaitQuery(sql);
     res.render('tools.ejs', {
         tools: tools,
-        admin: req.body.userType > 1
+        admin: req.user.userType > 1
     })
 })
 app.get('/materials', checkAuthenticated, async (req, res) => {
@@ -106,7 +109,7 @@ app.get('/materials', checkAuthenticated, async (req, res) => {
     let materials = await db.awaitQuery(sql);
     res.render('materials.ejs', {
         materials: materials,
-        admin: req.body.userType > 1
+        admin: req.user.userType > 1
     })
 })
 
@@ -119,7 +122,21 @@ app.get('/tool', checkAuthenticated, async (req, res) => {
     } else {
         res.render('tool.ejs', {
             name: toolName[0].toolName,
-            admin: req.body.userType > 1
+            admin: req.user.userType > 1
+        })
+    }
+})
+
+app.get('/material', checkAuthenticated, async (req, res) => {
+    let sql = 'SELECT materialName FROM material WHERE materialId = ?';
+
+    let materialName = await db.awaitQuery(sql, req.query.id);
+    if (materialName.length < 1) {
+        res.redirect("/materials")
+    } else {
+        res.render('material.ejs', {
+            name: materialName[0].materialName,
+            admin: req.user.userType > 1
         })
     }
 })
@@ -141,8 +158,7 @@ app.get('/users', async (req, res) => {
 app.post('/addTool/', async (req, res) => {
     let sql = "INSERT INTO tool SET ?"
     let tool = {
-        toolName: req.body.toolName,
-        amount: 0
+        toolName: req.body.toolName
     }
 
     db.query(sql, tool, (error, result) => {
@@ -159,7 +175,7 @@ app.post('/addMaterial/', async (req, res) => {
         amount: 0
     }
 
-    db.query(sql, tool, (error, result) => {
+    db.query(sql, material, (error, result) => {
         if (error) throw error;
     });
 
@@ -171,7 +187,7 @@ app.post('/approval/', async (req, res) => {
 
     console.log(id);
 
-    let sql = 'UPDATE users SET userType = 2 WHERE userid = ?';
+    let sql = 'UPDATE users SET userType = 1 WHERE userid = ?';
     db.query(sql, id, (error, result) => {
         if (error) throw error;
     });
@@ -219,7 +235,7 @@ function checkAuthenticated(req, res, next) {
     res.redirect('/login')
 }
 function checkAdmin(req, res, next) {
-    if (req.isAuthenticated() && req.body.userType >= 2) {
+    if (req.isAuthenticated() && req.user.userType >= 2) {
         return next()
     }
 

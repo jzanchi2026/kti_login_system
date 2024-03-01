@@ -3,5 +3,5 @@
 <a href="/addMaterial">Add New Tool</a>
 <% } %>
 <% for(let i = 0; i<materials.length; i++){ %>
-    <p><a href="tool?id=<%= materials[i].materialId %>"><%= tools[i].materialName %> </a></p>
+    <p><a href="material?id=<%= materials[i].materialId %>"><%= materials[i].materialName %> </a></p>
 <% } %>
