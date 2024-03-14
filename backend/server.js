@@ -90,6 +90,84 @@ app.get('/viewAdmins', checkAdmin, async (req, res) => {
     });
 })
 
+// API Implementation
+
+// Tools
+
+// Gets details for a specific tool
+// https://kti.com/getTool?id=1
+app.get('/getTool', checkNotAuthenticated, async (req, res) => {
+    let sql = 'SELECT * FROM tool WHERE toolTypeId = ?';
+
+    let data = await db.awaitQuery(sql, req.query.id);
+    res.render('getTool.ejs', {
+        data: data[0]
+    })
+})
+
+// Gets the list of tools
+// https://kti.com/getTools
+app.get('/getTools', checkNotAuthenticated, async (req, res) => {
+    let sql = 'SELECT * FROM tool';
+
+    let data = await db.awaitQuery(sql);
+    res.render('getTools.ejs', {
+        data: data
+    })
+})
+
+// Creates a new tool type
+// https://kti.com/createToolType?name=newTool
+app.get('/createToolType', checkNotAuthenticated, async (req, res) => {
+    let sql = "INSERT INTO tool SET ?"
+    let tool = {
+        toolName: req.query.name
+    }
+
+    console.log(tool);
+
+    let success = true;
+    let msg = "";
+
+    await db.query(sql, tool, (error, result) => {
+        if (error) {
+            success = false;
+            msg = "An unexpected error has occured, make sure you passed in all fields correctly";
+            console.error(error.toString());
+        }
+        res.render('createToolType.ejs', {
+            data: {success: success, msg: msg}
+        })
+    });
+})
+
+// End Tools
+
+// Individual Tools
+
+// Gets a list of tools a particular user has taken out
+// https://kti.com/getUserTools?id=1
+app.get('/getUserTools', checkNotAuthenticated, async (req, res) => {
+    let sql = 'SELECT * FROM takenTool WHERE accountId = ?';
+
+    let data = await db.awaitQuery(sql, req.query.id);
+    res.render('getUserTools.ejs', {
+        data: data
+    })
+})
+
+// End Individual Tools
+
+// Materials
+
+// End Materials
+
+// Account
+
+// End Account
+
+// End API Implementation
+
 app.get('/addTool', checkAdmin, (req, res) => {
     res.render('addTool.ejs')
 })
