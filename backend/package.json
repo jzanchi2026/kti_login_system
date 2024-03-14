@@ -13,6 +13,8 @@
     "passport-google-oauth": "^2.0.0",
     "passport-google-oauth2": "^0.2.0",
     "passport-local": "^1.0.0",
+    "pg": "^8.11.3",
+    "pg-pool": "^3.6.1",
     "query-string": "^8.1.0"
   }
 }
