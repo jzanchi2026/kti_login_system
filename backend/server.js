@@ -10,41 +10,39 @@ const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
 const mysql = require('mysql-await')
-const { Pool } = require('pg');
 
 console.log(process.env.MYSQL_DATABASE)
-const pool = new Pool({
-    host: "ktprog.com",
-    port: '1433',
-    user: "ktinventory",
-    password: "Keefe!2024!Invent",
-    database: "ktinventory",
-    max: 20,
-    idleTimeoutMillis: 20000,
-    connectionTimeoutMillis: 5000,
-});
 
-const initializePassport = require('./passport-config')
-initializePassport(passport,
-    email = async (email) => {
-        let db = await pool.connect();
-        //users.find(user => user.email === email)
-        let sql = 'SELECT * FROM users WHERE email = ? AND userType > 0';
-        let user = await db.awaitQuery(sql, [email]);
-        console.log("User: " + JSON.stringify(user[0]));
-        db.release()
-        return user[0];
-    },
-    id = async (id) => {
-        let db = await pool.connect();
-        //users.find(user => user.email === email)
-        let sql = 'SELECT * FROM users WHERE userid = ?';
-        let user = await db.awaitQuery(sql, [id]);
-        db.release()
-        return user[0];
-    }
-)
+    const pool = mysql.createPool({
+        host: "ktprog.com",
+        user: "ktinventory",
+        password: "Keefe!2024!Invent",
+        database: "ktinventory",
+        max: 20,
+        idleTimeoutMillis: 20000,
+        connectionTimeoutMillis: 5000,
+    });
 
+    const initializePassport = require('./passport-config')
+    initializePassport(passport,
+        email = async (email) => {
+            let db = await pool.acquire();
+            //users.find(user => user.email === email)
+            let sql = 'SELECT * FROM users WHERE email = ? AND userType > 0';
+            let user = await db.awaitQuery(sql, [email]);
+            console.log("User: " + JSON.stringify(user[0]));
+            db.release()
+            return user[0];
+        },
+        id = async (id) => {
+            let db = await pool.acquire();
+            //users.find(user => user.email === email)
+            let sql = 'SELECT * FROM users WHERE userid = ?';
+            let user = await db.awaitQuery(sql, [id]);
+            db.release()
+            return user[0];
+        }
+    )
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
@@ -154,23 +152,14 @@ app.get('/material', checkAuthenticated, async (req, res) => {
 })
 
 app.get('/approval', checkNotAuthenticated, async (req, res) => {
-    var db = mysql.createConnection({
-        host: "http://www.ktprog.com",
-        port: '1433',
-        user: "ktinventory",
-        password: "Keefe!2024!Invent",
-        database: "ktinventory",
-    });
-    let sql = 'SELECT * FROM users WHERE userType = 0';
-    let users = await db.awaitQuery(sql);
+    let db = await pool.awaitGetConnection();
     db.release();
-
-    res.render('approval.ejs', { users: users });
+    res.render('approval.ejs', { users: "" });
 })
 
 
 app.get('/users', async (req, res) => {
-    let db = await pool.connect();
+    let db = await pool.awaitGetConnection();
     let sql = 'SELECT * FROM users';
     let users = await db.awaitQuery(sql);
     db.release();
@@ -213,7 +202,7 @@ app.post('/approval/', async (req, res) => {
     console.log(id);
 
     let sql = 'UPDATE users SET userType = 1 WHERE userid = ?';
-    let db = await pool.connect();
+    let db = await pool.acquire();
     db.query(sql, id, (error, result) => {
         if (error) throw error;
     });
@@ -234,7 +223,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             userType: 0,
         };
 
-        let db = await pool.connect();
+        let db = await pool.acquire();
         db.query(sql, user, (error, result) => {
             if (error) throw error;
         });
