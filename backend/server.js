@@ -57,7 +57,7 @@ app.get('/', checkAuthenticated, (req, res) => {
     console.log("body user" + req.body.user);
     console.log("req user" + req.user);
 
-    res.render('index.ejs', { name: req.user.displayName })
+    res.render('index.ejs', { name: req.user.displayName, userid: req.user.userid, email: req.user.email })
 })
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
@@ -74,8 +74,8 @@ app.post('/test2', async (req, res) => {
     let id = req.body.id;
 
     console.log(id);
-
-    res.end(200);
+    console.log(req.user);
+    res.end("test2");
 })
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
