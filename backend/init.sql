@@ -27,21 +27,16 @@ CREATE TABLE material(
 );
 CREATE TABLE tool(
     toolName VARCHAR(50) not null,
-    --amount int not null,  Client didn't want this, not sure why it was here.
     toolTypeId int not null AUTO_INCREMENT,
     PRIMARY KEY(toolTypeId)
 );
 CREATE TABLE takenTool(
     toolTypeId int not null,
-    --accountID should be nullable
-    accountId int, --not null,
+    accountId int,
     timeTaken DATETIME not null,
     toolId int not null AUTO_INCREMENT,
     constraint toolTypeConstraint1
     foreign key (toolTypeId) references tool(toolTypeId) on delete cascade,
-    -- it should be nullable
-    --constraint takenToolAccount
-    --foreign key (accountId) references idAccount(id) on delete cascade,
     PRIMARY KEY(toolId)
 );
 CREATE TABLE toolHistory(
@@ -49,7 +44,7 @@ CREATE TABLE toolHistory(
     accountId int not null,
     timeTaken DATETIME not null,
     expireTime DATETIME not null,
-    toolId int not null, --AUTO_INCREMENT,
+    toolId int not null, 
     constraint toolTypeConstraint2
     foreign key (toolTypeId) references tool(toolTypeId) on delete cascade,
     constraint toolHistoryAccount

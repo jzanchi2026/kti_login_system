@@ -20,7 +20,6 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: pass
       MYSQL_HOST: db
-    hostname: "192.168.16.1"
     ports:
       - "3000:3000"
     depends_on:
