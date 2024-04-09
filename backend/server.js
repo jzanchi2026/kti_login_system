@@ -101,28 +101,34 @@ app.get('/viewAdmins', checkAdmin, async (req, res) => {
 // Gets details for a specific tool
 // https://kti.com/getTool?id=1
 app.get('/getTool', checkNotAuthenticated, async (req, res) => {
+    let db = await pool.awaitGetConnection();
     let sql = 'SELECT * FROM tool WHERE toolTypeId = ?';
 
     let data = await db.awaitQuery(sql, req.query.id);
     res.render('getTool.ejs', {
         data: data[0]
     })
+    db.release();
 })
 
 // Gets the list of tools
 // https://kti.com/getTools
 app.get('/getTools', checkNotAuthenticated, async (req, res) => {
+    let db = await pool.awaitGetConnection();
     let sql = 'SELECT * FROM tool';
 
     let data = await db.awaitQuery(sql);
     res.render('getTools.ejs', {
         data: data
     })
+    db.release();
 })
 
 // Creates a new tool type
 // https://kti.com/createToolType?name=newTool
 app.get('/createToolType', checkNotAuthenticated, async (req, res) => {
+
+    let db = await pool.awaitGetConnection();
     let sql = "INSERT INTO tool SET ?"
     let tool = {
         toolName: req.query.name
@@ -143,6 +149,7 @@ app.get('/createToolType', checkNotAuthenticated, async (req, res) => {
             data: {success: success, msg: msg}
         })
     });
+    db.release();
 })
 
 // End Tools
@@ -152,12 +159,14 @@ app.get('/createToolType', checkNotAuthenticated, async (req, res) => {
 // Gets a list of tools a particular user has taken out
 // https://kti.com/getUserTools?id=1
 app.get('/getUserTools', checkNotAuthenticated, async (req, res) => {
+    let db = await pool.awaitGetConnection();
     let sql = 'SELECT * FROM takenTool WHERE accountId = ?';
 
     let data = await db.awaitQuery(sql, req.query.id);
     res.render('getUserTools.ejs', {
         data: data
     })
+    db.release();
 })
 
 // End Individual Tools
