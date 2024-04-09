@@ -11,38 +11,38 @@ const session = require('express-session')
 const methodOverride = require('method-override')
 const mysql = require('mysql-await')
 
-console.log(process.env.MYSQL_DATABASE)
+console.log(process.env.MYSQL_DATABASE) 
 
-    const pool = mysql.createPool({
-        host: "ktprog.com",
-        user: "ktinventory",
-        password: "Keefe!2024!Invent",
-        database: "ktinventory",
-        max: 20,
-        idleTimeoutMillis: 20000,
-        connectionTimeoutMillis: 5000,
-    });
+const pool = mysql.createPool({
+    host: "ktprog.com",
+    user: "ktinventory",
+    password: "Keefe!2024!Invent",
+    database: "ktinventory",
+    max: 20,
+    idleTimeoutMillis: 20000,
+    connectionTimeoutMillis: 5000,
+});
 
-    const initializePassport = require('./passport-config')
-    initializePassport(passport,
-        email = async (email) => {
-            let db = await pool.acquire();
-            //users.find(user => user.email === email)
-            let sql = 'SELECT * FROM users WHERE email = ? AND userType > 0';
-            let user = await db.awaitQuery(sql, [email]);
-            console.log("User: " + JSON.stringify(user[0]));
-            db.release()
-            return user[0];
-        },
-        id = async (id) => {
-            let db = await pool.acquire();
-            //users.find(user => user.email === email)
-            let sql = 'SELECT * FROM users WHERE userid = ?';
-            let user = await db.awaitQuery(sql, [id]);
-            db.release()
-            return user[0];
-        }
-    )
+const initializePassport = require('./passport-config')
+initializePassport(passport,
+    email = async (email) => {
+        let db = await pool.awaitGetConnection();
+        //users.find(user => user.email === email)
+        let sql = 'SELECT * FROM users WHERE email = ? AND userType > 0';
+        let user = await db.awaitQuery(sql, [email]);
+        console.log("User: " + JSON.stringify(user[0]));
+        db.release()
+        return user[0];
+    },
+    id = async (id) => {
+        let db = await pool.awaitGetConnection();
+        //users.find(user => user.email === email)
+        let sql = 'SELECT * FROM users WHERE userid = ?';
+        let user = await db.awaitQuery(sql, [id]);
+        db.release()
+        return user[0];
+    }
+)
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
@@ -85,7 +85,7 @@ app.get('/register', checkNotAuthenticated, (req, res) => {
 })
 
 app.get('/viewAdmins', checkAdmin, async (req, res) => {
-    let db = await pool.connect();
+    let db = await pool.awaitGetConnection();;
     let sql = 'SELECT displayName FROM users WHERE userType = 2';
     let admins = await db.awaitQuery(sql);
     db.release();
@@ -101,6 +101,7 @@ app.get('/addMaterial', checkAdmin, (req, res) => {
     res.render('addMaterial.ejs')
 })
 app.get('/tools', checkAuthenticated, async (req, res) => {
+    let db = await pool.awaitGetConnection();;
     let sql = 'SELECT toolName, toolTypeId from tool';
     let tools = await db.awaitQuery(sql);
     res.render('tools.ejs', {
@@ -109,7 +110,7 @@ app.get('/tools', checkAuthenticated, async (req, res) => {
     })
 })
 app.get('/materials', checkAuthenticated, async (req, res) => {
-    let db = await pool.connect();
+    let db = await pool.awaitGetConnection();;
     let sql = 'SELECT materialName, materialId from material';
     let materials = await db.awaitQuery(sql);
     db.release();
@@ -120,7 +121,7 @@ app.get('/materials', checkAuthenticated, async (req, res) => {
 })
 
 app.get('/tool', checkAuthenticated, async (req, res) => {
-    let db = await pool.connect();
+    let db = await pool.awaitGetConnection();;
     let sql = 'SELECT toolName FROM tool WHERE toolTypeId = ?';
 
     let toolName = await db.awaitQuery(sql, req.query.id);
@@ -136,7 +137,7 @@ app.get('/tool', checkAuthenticated, async (req, res) => {
 })
 
 app.get('/material', checkAuthenticated, async (req, res) => {
-    let db = await pool.connect();
+    let db = await pool.awaitGetConnection();;
     let sql = 'SELECT materialName FROM material WHERE materialId = ?';
 
     let materialName = await db.awaitQuery(sql, req.query.id);
@@ -152,9 +153,12 @@ app.get('/material', checkAuthenticated, async (req, res) => {
 })
 
 app.get('/approval', checkNotAuthenticated, async (req, res) => {
-    let db = await pool.awaitGetConnection();
+    var db = await pool.awaitGetConnection();
+    let sql = 'SELECT * FROM users';
+    let users = await db.awaitQuery(sql);
     db.release();
-    res.render('approval.ejs', { users: "" });
+
+    res.render('approval.ejs', { users: users });
 })
 
 
@@ -172,7 +176,7 @@ app.post('/addTool/', async (req, res) => {
     let tool = {
         toolName: req.body.toolName
     }
-    let db = await pool.connect();
+    let db = await pool.awaitGetConnection();;
     db.query(sql, tool, (error, result) => {
         if (error) throw error;
     });
@@ -188,7 +192,7 @@ app.post('/addMaterial/', async (req, res) => {
         amount: 0
     }
 
-    let db = await pool.connect();
+    let db = await pool.awaitGetConnection();;
     db.query(sql, material, (error, result) => {
         if (error) throw error;
     });
@@ -202,7 +206,7 @@ app.post('/approval/', async (req, res) => {
     console.log(id);
 
     let sql = 'UPDATE users SET userType = 1 WHERE userid = ?';
-    let db = await pool.acquire();
+    let db = await pool.awaitGetConnection();
     db.query(sql, id, (error, result) => {
         if (error) throw error;
     });
@@ -223,7 +227,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             userType: 0,
         };
 
-        let db = await pool.acquire();
+        let db = await pool.awaitGetConnection();
         db.query(sql, user, (error, result) => {
             if (error) throw error;
         });
