@@ -105,7 +105,7 @@ app.get('/getTool', checkNotAuthenticated, async (req, res) => {
     let sql = 'SELECT * FROM tool WHERE toolTypeId = ?';
 
     let data = await db.awaitQuery(sql, req.query.id);
-    res.render('getTool.ejs', {
+    res.render('apiOut.ejs', {
         data: data[0]
     })
     db.release();
@@ -118,7 +118,7 @@ app.get('/getTools', checkNotAuthenticated, async (req, res) => {
     let sql = 'SELECT * FROM tool';
 
     let data = await db.awaitQuery(sql);
-    res.render('getTools.ejs', {
+    res.render('apiOut.ejs', {
         data: data
     })
     db.release();
@@ -145,7 +145,7 @@ app.get('/createToolType', checkNotAuthenticated, async (req, res) => {
             msg = "An unexpected error has occured, make sure you passed in all fields correctly";
             console.error(error.toString());
         }
-        res.render('createToolType.ejs', {
+        res.render('apiOut.ejs', {
             data: {success: success, msg: msg}
         })
     });
@@ -163,7 +163,7 @@ app.get('/getUserTools', checkNotAuthenticated, async (req, res) => {
     let sql = 'SELECT * FROM takenTool WHERE accountId = ?';
 
     let data = await db.awaitQuery(sql, req.query.id);
-    res.render('getUserTools.ejs', {
+    res.render('apiOut.ejs', {
         data: data
     })
     db.release();
