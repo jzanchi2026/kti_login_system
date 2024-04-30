@@ -18,9 +18,9 @@ const pool = mysql.createPool({
     user: "ktinventory",
     password: "Keefe!2024!Invent",
     database: "ktinventory",
-    max: 20,
-    idleTimeoutMillis: 20000,
-    connectionTimeoutMillis: 5000,
+    connectionLimit: 20,
+    connectTimeout: 50000,
+    acquireTimeout: 50000,
 });
 
 const initializePassport = require('./passport-config')

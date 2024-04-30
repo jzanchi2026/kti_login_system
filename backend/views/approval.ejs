@@ -8,6 +8,7 @@
                 <td><%= users[i].displayName %></td>
                 <td><%= users[i].email %></td>
                 <td><button type="submit" name="aproveid" value='<%= users[i].userid %>'>Approve</button></td>
+                <td><button type="submit" name="rejectid" value='<%= users[i].userid %>'>Reject</button></td>
             </tr>
         <% } %>
     </table>
