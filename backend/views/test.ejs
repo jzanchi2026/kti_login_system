@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Itemslist</title>
+  <link href="/itemstyle.css" rel="stylesheet" type="text/css"/>
+  <link rel="icon" type="image/x-icon" href="/images/Logo.png">
+
+  <!--Google Fonts-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+</head>
+  
+<body>
+  <nav>
+    <p class="navMainText">
+      <img id="navImage" src="/images/Logo.png" width="100" alt="drawing of a welder">
+      Keefe Tech Inventory
+    </p>
+
+  </nav>
+
+  <!-- Grid Container For The Script To Append To -->
+  <div class="grid-container "> 
+
+  </div>  
+  
+
+  <button class="tool-button buttonOrange" onclick="openItemForm()">+</button>
+  <div class="tool-popup" id="myItemForm">
+    <form class="tool-container">
+      <h1>New Tool</h1>
+
+      <label for="toolname"><b>Tool Name</b></label>
+      <input type="text" placeholder="Enter Tool Name" name="name" id="nameInput">
+
+      <div id="imagePreview"></div>
+
+      <button type="button" class="btn" onclick="createTool()">Create Tool</button> 
+      <button type="button" class="btn cancel" onclick="closeItemForm()">Cancel</button>
+    </form>
+  </div>
+
+      <script>
+        var x = ''
+        var cards = []
+        function deleteCards() {
+          for (var i = 0; i < cards.length; i++) {
+            cards[i].remove();
+          }
+        }
+        async function createTool() {
+          var spawnCondition = document.getElementById("nameInput").value
+          if (spawnCondition && spawnCondition != "") {
+            json = await fetch('/createToolType?name=' + spawnCondition).then(x => x.json());
+            deleteCards();
+            getItems();
+          }
+        }
+        function itemSpawn(name) {
+          var spawnCondition = name || document.getElementById("nameInput").value //Simple check to make sure user input proper values into the card create
+          //var spawnCondition2 = document.getElementById("quantityInput") unused currently
+      
+          if (spawnCondition != "" /*&& spawnCondition2.value != ""*/) {
+            var x = document.createElement("Button"); //Main Button
+            cards.push(x);
+            const newDiv = document.createElement("div");
+            const theP = document.createElement("p");
+            const imageCard = document.createElement("div");
+
+            newDiv.classList.add("border");
+            imageCard.classList.add("imageCard");
+            x.setAttribute("class", "grid-item");
+
+            var txtConvert = spawnCondition
+            theP.innerText = txtConvert; //Gets Inputted Name And Puts It On Card
+
+            newDiv.appendChild(theP); //Adds div with border for text into the main button
+            document.getElementsByClassName("grid-container")[0].appendChild(x);
+        
+            
+
+            x.appendChild(newDiv);
+            x.appendChild(imageCard);
+
+            document.getElementById("nameInput").value = "";
+            document.getElementById('imagePreview').innerHTML = '';
+          }
+        }
+
+        async function getItems() {
+          json = await fetch('/getTools').then(x => x.json());
+          for (var item in json) {
+            itemSpawn(json[item].toolName);
+          }
+        }
+
+        function openItemForm() {
+          document.getElementById("myItemForm").style.display = "block";
+        }
+
+        function closeItemForm() {
+          document.getElementById("myItemForm").style.display = "none";
+        }
+        
+        function openForm() {
+          document.getElementById("myForm").style.display = "block";
+        }
+
+        function closeForm() {
+          document.getElementById("myForm").style.display = "none";
+        }
+
+        function fileValidation() { //Alert Invalid File Type Keeps Popping Up, No Preview Div Currently
+          var imageConvert = document.getElementById('imageInput');
+          var imageValue = imageConvert.value;
+          var allowExtension = /(\.jpg|\.jpeg|\.png)$/i;
+            
+          if (!allowExtension.exec(imageValue)) {
+            alert('Invalid file type');
+            imageConvert.value = '';
+            return false;
+          }
+          else {
+            if (imageConvert.files && imageConvert.files[0]) {
+              var fileReader = new FileReader();
+              fileReader.onload = function(e) {
+                document.getElementById(
+                            'imagePreview').innerHTML = 
+                            '<img src="' + e.target.result
+                            + '"/>';
+              };
+              fileReader.readAsDataURL(imageConvert.files[0]);
+            }
+          }
+
+        }
+        getItems();
+      </script>
+
+</body>
+
+</html>

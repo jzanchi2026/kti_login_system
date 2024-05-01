@@ -1,4 +1,3 @@
-<h1>Login</h1>
 <error>
 <% if (messages.error) { %>
   <%= messages.error %>
@@ -8,15 +7,57 @@
 <% if (messages.error) { %>
   400
 <% } %></error>
-<form action="/login" method="POST">
-  <div>
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link href="loginpage.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+  <a href="/register">Register</a>
+  
+  <div class="orange">
+    <h1 class="spacing">KTI</h1>
+    <form action="/login" method="POST">
+      <div class="spacing">
+        <label for="email"><b>Email:</label></b>
+        <input type="email" id="email" name="email" onfocus="myFocus(this)" onblur="myBlur(this)" required><br><br>
+      </div>
+
+      <div class="spacing">
+        <label for="password"><b>Password:</label></b>
+        <input type="password" id="myInput" name="password" onfocus="myFocus(this)" onblur="myBlur(this)" <!--pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"-- title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required><br><br>
+      </div>
+      <p class="show"><input type="checkbox" onclick="myFunction()"><b>Show Password</p></b>
+      
+      <div>
+        <button type="submit" class="login"><b>Login</button></b>
+      </div>
+    </form>
   </div>
-  <div>
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" required>
-  </div>
-  <button type="submit">Login</button>
-</form>
-<a href="/register">Register</a>
+
+  <script>
+  function myFunction() {
+    var x = document.getElementById("myInput");
+    if (x.type === "password") {
+      x.type = "text";
+    } else {
+      x.type = "password";
+    }
+  }
+
+    function myFocus(x) {
+      x.style.background = "blue"
+    }
+    function myBlur(x) {
+      x.style.background = "white"
+    }
+
+  </script>  
+
+  
+  
+</body>
+</html>

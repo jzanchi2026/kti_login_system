@@ -54,12 +54,14 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
+app.use(express.static('public'))
 
 app.get('/', checkAuthenticated, (req, res) => {
-    console.log("body user" + req.body.user);
-    console.log("req user" + req.user);
+    res.redirect('/demo');
+    //console.log("body user" + req.body.user);
+    //console.log("req user" + req.user);
 
-    res.render('index.ejs', { name: req.user.displayName, userid: req.user.userid, email: req.user.email })
+    //res.render('index.ejs', { name: req.user.displayName, userid: req.user.userid, email: req.user.email })
 })
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
@@ -67,7 +69,7 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
 })
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: '/',
+    successRedirect: /*'/'*/'/demo',
     failureRedirect: '/login',
     failureFlash: true
 }))
@@ -100,7 +102,7 @@ app.get('/viewAdmins', checkAdmin, async (req, res) => {
 
 // Gets details for a specific tool
 // https://kti.com/getTool?id=1
-app.get('/getTool', checkNotAuthenticated, async (req, res) => {
+app.get('/getTool', checkAuthenticated, async (req, res) => {
     let db = await pool.awaitGetConnection();
     let sql = 'SELECT * FROM tool WHERE toolTypeId = ?';
 
@@ -113,7 +115,7 @@ app.get('/getTool', checkNotAuthenticated, async (req, res) => {
 
 // Gets the list of tools
 // https://kti.com/getTools
-app.get('/getTools', checkNotAuthenticated, async (req, res) => {
+app.get('/getTools', checkAuthenticated, async (req, res) => {
     let db = await pool.awaitGetConnection();
     let sql = 'SELECT * FROM tool';
 
@@ -126,10 +128,10 @@ app.get('/getTools', checkNotAuthenticated, async (req, res) => {
 
 // Creates a new tool type
 // https://kti.com/createToolType?name=newTool
-app.get('/createToolType', checkNotAuthenticated, async (req, res) => {
+app.get('/createToolType', checkAuthenticated, async (req, res) => {
 
     let db = await pool.awaitGetConnection();
-    let sql = "INSERT INTO tool SET ?"
+    let sql = "INSERT INTO tool SET ?";
     let tool = {
         toolName: req.query.name
     }
@@ -143,7 +145,6 @@ app.get('/createToolType', checkNotAuthenticated, async (req, res) => {
         if (error) {
             success = false;
             msg = "An unexpected error has occured, make sure you passed in all fields correctly";
-            console.error(error.toString());
         }
         res.render('apiOut.ejs', {
             data: {success: success, msg: msg}
@@ -158,7 +159,7 @@ app.get('/createToolType', checkNotAuthenticated, async (req, res) => {
 
 // Gets a list of tools a particular user has taken out
 // https://kti.com/getUserTools?id=1
-app.get('/getUserTools', checkNotAuthenticated, async (req, res) => {
+app.get('/getUserTools', checkAuthenticated, async (req, res) => {
     let db = await pool.awaitGetConnection();
     let sql = 'SELECT * FROM takenTool WHERE accountId = ?';
 
@@ -180,6 +181,10 @@ app.get('/getUserTools', checkNotAuthenticated, async (req, res) => {
 // End Account
 
 // End API Implementation
+
+app.get('/demo', checkAuthenticated, (req, res) => {
+    res.render('test.ejs')
+})
 
 app.get('/addTool', checkAdmin, (req, res) => {
     res.render('addTool.ejs')
