@@ -11,7 +11,7 @@ const session = require('express-session')
 const methodOverride = require('method-override')
 const mysql = require('mysql-await')
 
-console.log(process.env.MYSQL_DATABASE) 
+console.log(process.env.MYSQL_DATABASE)
 
 const pool = mysql.createPool({
     host: "ktprog.com",
@@ -147,7 +147,7 @@ app.get('/createToolType', checkAuthenticated, async (req, res) => {
             msg = "An unexpected error has occured, make sure you passed in all fields correctly";
         }
         res.render('apiOut.ejs', {
-            data: {success: success, msg: msg}
+            data: { success: success, msg: msg }
         })
     });
     db.release();
@@ -183,7 +183,9 @@ app.get('/getUserTools', checkAuthenticated, async (req, res) => {
 // End API Implementation
 
 app.get('/demo', checkAuthenticated, (req, res) => {
-    res.render('test.ejs')
+    res.render('test.ejs',
+        { admin: req.user.userType > 1 }
+    )
 })
 
 app.get('/addTool', checkAdmin, (req, res) => {

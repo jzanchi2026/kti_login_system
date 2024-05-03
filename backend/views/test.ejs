@@ -26,9 +26,11 @@
   <div class="grid-container "> 
 
   </div>  
-  
+  <% if(admin){ %>
 
   <button class="tool-button buttonOrange" onclick="openItemForm()">+</button>
+  
+ <% } %>
   <div class="tool-popup" id="myItemForm">
     <form class="tool-container">
       <h1>New Tool</h1>
@@ -42,7 +44,6 @@
       <button type="button" class="btn cancel" onclick="closeItemForm()">Cancel</button>
     </form>
   </div>
-
       <script>
         var x = ''
         var cards = []
