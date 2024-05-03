@@ -246,9 +246,9 @@ app.get('/material', checkAuthenticated, async (req, res) => {
     }
 })
 
-app.get('/approval', checkNotAuthenticated, async (req, res) => {
+app.get('/approval', checkAdmin, async (req, res) => {
     var db = await pool.awaitGetConnection();
-    let sql = 'SELECT * FROM users';
+    let sql = 'SELECT * FROM users WHERE userType = 0';
     let users = await db.awaitQuery(sql);
     db.release();
 
@@ -294,7 +294,7 @@ app.post('/addMaterial/', async (req, res) => {
     res.redirect("/materials");
 })
 
-app.post('/approval/', async (req, res) => {
+app.post('/approval/', checkAdmin, async (req, res) => {
     let id = req.body.aproveid;
 
     console.log(id);
@@ -332,6 +332,15 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         res.redirect('/register')
     }
 })
+
+app.get('/logout', checkAuthenticated, async (req, res) => {
+    req.logOut((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/login');
+    });
+});
 
 app.delete('/logout', (req, res, next) => {
     req.logOut((err) => {
