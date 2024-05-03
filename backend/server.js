@@ -331,6 +331,15 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     }
 })
 
+app.get('/logout', checkAuthenticated, async (req, res) => {
+    req.logOut((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/login');
+    });
+});
+
 app.delete('/logout', (req, res, next) => {
     req.logOut((err) => {
         if (err) {
