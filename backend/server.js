@@ -184,7 +184,7 @@ app.get('/getUserTools', checkAuthenticated, async (req, res) => {
 
 app.get('/demo', checkAuthenticated, (req, res) => {
     res.render('test.ejs',
-        { admin: req.user.userType > 1 }
+        { admin: req.user.userType > 1, name: req.user.displayName, userid: req.user.userid, email: req.user.email }
     )
 })
 
