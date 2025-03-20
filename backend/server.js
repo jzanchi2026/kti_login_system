@@ -69,10 +69,24 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
 })
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: /*'/'*/'/demo',
-    failureRedirect: '/login',
+    successRedirect: /*'/'*/'/loginApiSuccess',
+    failureRedirect: '/loginApiFailure',
     failureFlash: true
 }))
+
+app.get('/loginApiSuccess', checkAuthenticated, (req, res) => { 
+    res.send({
+        login: true,
+        userid: req.user.userid
+    })
+})
+
+app.get('/loginApiFailure', checkNotAuthenticated, (req, res) => { 
+    res.send({
+        login: false,
+        userid: 0
+    })
+})
 
 app.post('/test2', async (req, res) => {
     let id = req.body.id;
