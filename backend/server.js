@@ -77,14 +77,16 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 app.get('/loginApiSuccess', checkAuthenticated, (req, res) => { 
     res.send({
         login: true,
-        userid: req.user.userid
+        userid: req.user.userid,
+        username: req.user.displayName
     })
 })
 
 app.get('/loginApiFailure', checkNotAuthenticated, (req, res) => { 
     res.send({
         login: false,
-        userid: 0
+        userid: 0,
+        username: ""
     })
 })
 
