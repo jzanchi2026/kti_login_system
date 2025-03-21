@@ -88,6 +88,7 @@ routes.router.get('/approval', routes.checkAdmin, async (req, res) => {
 
 
 routes.router.get('/users', async (req, res) => {
+  res.append("Access-Control-Allow-Origin", "*");
   let db = await pool.awaitGetConnection();
   let sql = 'SELECT * FROM users';
   let users = await db.awaitQuery(sql);
@@ -97,6 +98,7 @@ routes.router.get('/users', async (req, res) => {
 })
 
 routes.router.post('/addTool/', async (req, res) => {
+  res.append("Access-Control-Allow-Origin", "*");
   let sql = "INSERT INTO tool SET ?"
   let tool = {
       toolName: req.body.toolName
@@ -111,6 +113,7 @@ routes.router.post('/addTool/', async (req, res) => {
 })
 
 routes.router.post('/addMaterial/', async (req, res) => {
+  res.append("Access-Control-Allow-Origin", "*");
   let sql = "INSERT INTO material SET ?"
   let material = {
       materialName: req.body.materialName,
