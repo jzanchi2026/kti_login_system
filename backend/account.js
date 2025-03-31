@@ -60,11 +60,13 @@ routes.router.delete('/logout', (req, res, next) => {
   });
 });
 
-routes.router.post('/login', routes.checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: /*'/'*/'/loginInfo',
-  failureRedirect: '/loginApiFailure',
-  failureFlash: true
-}))
+routes.router.post('/login', routes.checkNotAuthenticated, (req, res) => {
+  console.log(req.body.email);
+  return passport.authenticate('local', {
+    successRedirect: /*'/'*/'/loginInfo',
+    failureRedirect: '/loginApiFailure',
+    failureFlash: true
+})(req, res)});
 
 routes.router.get('/loginInfo', routes.checkAuthenticated, (req, res) => { 
   res.send({

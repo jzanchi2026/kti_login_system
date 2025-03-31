@@ -9,6 +9,7 @@ const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
 const routes = require('./util.js')
+var cors = require('cors')
 require("./demo.js");
 const passport = require("./account.js").passport;
 require("./tools.js");
@@ -39,6 +40,7 @@ initializePassport(passport,
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
+app.use(cors())
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,

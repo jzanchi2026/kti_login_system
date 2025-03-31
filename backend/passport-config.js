@@ -13,6 +13,7 @@ function initialize(passport, getUserByEmail, getUserById) {
         console.log("Bcrypt code, user: " + JSON.stringify(user));
         return done(null, user)
       } else {
+        console.log("Name = " + email)
         return done(null, false, { message: 'Password incorrect' })
       }
     } catch (e) {
