@@ -15,6 +15,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.11.3",
     "pg-pool": "^3.6.1",
-    "query-string": "^8.1.0"
+    "query-string": "^8.1.0",
+    "cors": "2.8.5"
   }
 }

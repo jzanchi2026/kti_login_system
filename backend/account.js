@@ -51,7 +51,7 @@ routes.router.get('/logout', routes.checkAuthenticated, async (req, res) => {
 });
 
 routes.router.delete('/logout', (req, res, next) => {
-  res.append("Access-Control-Allow-Origin", "*");
+
   req.logOut((err) => {
       if (err) {
           return next(err);

@@ -13,7 +13,7 @@ const pool = mysql.createPool({
 });
 
 function checkAuthenticated(req, res, next) {
-  res.append("Access-Control-Allow-Origin", "*");
+
   if (req.isAuthenticated()) {
       return next()
   }
@@ -21,7 +21,7 @@ function checkAuthenticated(req, res, next) {
   res.redirect('/login')
 }
 function checkAdmin(req, res, next) {
-  res.append("Access-Control-Allow-Origin", "*");
+
   if (req.isAuthenticated() && req.user.userType >= 2) {
       return next()
   }
@@ -30,7 +30,7 @@ function checkAdmin(req, res, next) {
 }
 
 function checkNotAuthenticated(req, res, next) {
-  res.append("Access-Control-Allow-Origin", "*");
+
   if (req.isAuthenticated()) {
       return res.redirect('/')
   }
