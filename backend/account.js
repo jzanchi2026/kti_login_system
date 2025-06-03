@@ -68,9 +68,10 @@ routes.router.post('/login', routes.checkNotAuthenticated, (req, res) => {
     failureFlash: true
 })(req, res)});
 
-routes.router.get('/loginInfo', routes.checkAuthenticated, (req, res) => { 
+routes.router.get('/loginInfo', routes.privatePage("/loginApiFailure"), (req, res) => { 
   res.send({
       login: true,
+      email: req.user.email,
       userid: req.user.userid,
       username: req.user.displayName
   })
@@ -79,6 +80,7 @@ routes.router.get('/loginInfo', routes.checkAuthenticated, (req, res) => {
 routes.router.get('/loginApiFailure', routes.checkNotAuthenticated, (req, res) => { 
   res.send({
       login: false,
+      email: "",
       userid: 0,
       username: ""
   })

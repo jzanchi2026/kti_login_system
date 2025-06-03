@@ -21,6 +21,18 @@ function checkAuthenticated(req, res, next) {
 
   res.redirect('/login')
 }
+
+function privatePage(redirect) {
+  return function(req, res, next) {
+    console.log(req);
+    if (req.isAuthenticated()) {
+        return next()
+    }
+
+    res.redirect(redirect)
+  };
+}
+
 function checkAdmin(req, res, next) {
 
   if (req.isAuthenticated() && req.user.userType >= 2) {
@@ -38,4 +50,4 @@ function checkNotAuthenticated(req, res, next) {
   next()
 }
 
-module.exports = { router, checkAuthenticated, checkNotAuthenticated, checkAdmin, pool };
+module.exports = { router, checkAuthenticated, privatePage, checkNotAuthenticated, checkAdmin, pool };
