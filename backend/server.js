@@ -38,6 +38,7 @@ initializePassport(passport,
     }
 )
 app.set('view-engine', 'ejs')
+app.set('trust proxy', true);
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 
