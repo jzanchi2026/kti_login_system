@@ -51,7 +51,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { sameSite: 'none' }, 
+    cookie: { sameSite: 'none', secure: true }, 
 }))
 app.use(passport.initialize())
 app.use(passport.session())
