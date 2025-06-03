@@ -14,6 +14,7 @@ const pool = mysql.createPool({
 
 function checkAuthenticated(req, res, next) {
 
+  console.log(req);
   if (req.isAuthenticated()) {
       return next()
   }

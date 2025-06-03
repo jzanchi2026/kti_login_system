@@ -42,6 +42,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 
 const corsOptions = {
+    origin: "https://jzanchi2026.github.io", 
     credentials: true,
 };
 app.use(cors(corsOptions));
@@ -49,7 +50,8 @@ app.use(cors(corsOptions));
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: { sameSite: 'none' }, 
 }))
 app.use(passport.initialize())
 app.use(passport.session())
@@ -57,8 +59,10 @@ app.use(methodOverride('_method'))
 app.use(express.static('public'))
 app.use('/', routes.router)
 
-
-
+process.on('uncaughtException', function (err) {
+    console.log(err);
+}); 
+ 
 
 
 // API Implementation
