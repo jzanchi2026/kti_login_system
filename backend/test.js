@@ -9,6 +9,7 @@ describe("Server", () => {
   describe("User info", () => {
     it("GET /loginInfo should have whether the user's logged in, email, user id, and username (or placeholder values)", async () => {
       const res = await req.get("/loginInfo");
+      
       if (res.status == 302) {
         const res2 = await req.get(res.header["location"]);
         expect(res2.body).toHaveProperty('login');
@@ -30,17 +31,15 @@ describe("Server", () => {
       const res = req
         .post("/login")
         .query({"email": "test@test", "password": "test"})
-        .expect(302)
-        .end(function (err, res) {
+        .expect(302, async function (err, res) {
           if (err) throw err;
-          agent.saveCookies(res);
+
+          const res2 = req.get(res.header["location"]).
+            expect(200, async function(err, res) {
+              expect(res.body['login']).toBe(true);
+              expect(res.body['email']).toBe("test@test");
+            }).end((err, res) => {if (err) throw err});
         });
-        
-      const res2 = req.get(res.header["location"]).
-        expect(200, function(err, res) {
-          expect(res.body['login']).toBe(true);
-          expect(res.body['email']).toBe("test@test");
-        }).end((err, res) => {if (err) throw err});
     })
   })
 

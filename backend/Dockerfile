@@ -1,6 +1,6 @@
 FROM node:24.1.0 AS base
 WORKDIR /app
-EXPOSE 3000:3000
+EXPOSE 80:3000
 
 FROM base as dev
 RUN --mount=type=bind,source=package.json,target=package.json \

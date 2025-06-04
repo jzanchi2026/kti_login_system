@@ -1,30 +1,11 @@
 services:
-  db:
-    build: ./db
-    command: --default-authentication-plugin=mysql_native_password
-    image: tjpnick/db:latest
-    volumes:
-      - "./backend/init.sql:/docker-entrypoint-initdb.d/1.sql"
-    environment:
-      MYSQL_ROOT_PASSWORD: pass
-      MYSQL_DATABASE: ktinventory
-    ports:
-      - "3306:3306"
-    restart: always
   web:
     build: 
       context: ./backend
       dockerfile: Dockerfile
       target: prod
-    image: tjpnick/web:latest
-    environment:
-      MYSQL_DATABASE: ktinventory
-      MYSQL_USER: root
-      MYSQL_PASSWORD: pass
-      MYSQL_HOST: db
+    image: ktiprog.azurecr.io/skiscratcher/web:latest
     ports:
-      - "80:3000"
+      - "80:80"
     volumes:
       - "./node_modules:/srv/app/node_modules"
-    depends_on:
-      - db
