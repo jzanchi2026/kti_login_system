@@ -6,6 +6,6 @@ services:
       target: prod
     image: ktiprog.azurecr.io/skiscratcher/web:latest
     ports:
-      - "80:80"
+      - "80:3000"
     volumes:
       - "./node_modules:/srv/app/node_modules"
