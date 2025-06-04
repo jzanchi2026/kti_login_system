@@ -17,5 +17,19 @@
     "pg-pool": "^3.6.1",
     "query-string": "^8.1.0",
     "cors": "2.8.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.1.1",
+    "cross-env": "^7.0.3"
+  },
+  "scripts": {
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }

@@ -15,8 +15,6 @@ const passport = require("./account.js").passport;
 require("./tools.js");
 const pool = routes.pool;
 
-console.log(process.env.MYSQL_DATABASE)
-
 const initializePassport = require('./passport-config')
 initializePassport(passport,
     email = async (email) => {
@@ -64,31 +62,5 @@ process.on('uncaughtException', function (err) {
     console.log(err);
 }); 
  
-
-
-// API Implementation
-
-// Tools
-
-
-
-// End Individual Tools
-
-// Materials
-
-// End Materials
-
-// Account
-
-// End Account
-
-// End API Implementation
-
-
-
-
-
-
-
-
-app.listen(3000)
+let server = app.listen(3000);
+module.exports = { server, app }

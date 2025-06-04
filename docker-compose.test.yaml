@@ -14,7 +14,8 @@ services:
   web:
     build: 
       context: ./backend
-      target: dev
+      dockerfile: Dockerfile
+      target: test
     image: tjpnick/web:latest
     environment:
       MYSQL_DATABASE: ktinventory
