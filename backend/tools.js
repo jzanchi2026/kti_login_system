@@ -41,7 +41,7 @@ routes.router.post('/createToolType', routes.checkAuthenticated, async (req, res
   await db.query(sql, tool, (error, result) => {
       if (error) {
           success = false;
-          msg = "An unexpected error has occured, make sure you passed in all fields correctly";
+          msg = error;
       }
       res.send({ success: success, msg: msg })
   });
