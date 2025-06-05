@@ -58,8 +58,29 @@ routes.router.get('/getUserTools', routes.checkAuthenticated, async (req, res) =
   let sql = 'SELECT * FROM takenTool WHERE accountId = ?';
 
   let data = await db.awaitQuery(sql, req.query.id);
-  res.render('apiOut.ejs', {
-      data: data
-  })
+  res.send(data)
+  db.release();
+})
+
+routes.router.get('/checkoutTool', routes.checkAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+  let sql = 'INSERT INTO takenTool SET ?';
+  let tool = {
+    toolTypeId: req.query.id,
+    timeTaken: Date.now().toISOString().slice(0, 19).replace('T', ' '),
+    accountId: req.user.userid
+  }
+
+  let success = true;
+  let msg = "";
+
+  await db.query(sql, tool, (error, result) => {
+      if (error) {
+          success = false;
+          msg = "An unexpected error has occured, make sure you passed in all fields correctly";
+      }
+      res.send({ success: success, msg: msg })
+  });
+
   db.release();
 })
