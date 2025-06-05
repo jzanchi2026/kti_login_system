@@ -29,8 +29,8 @@ routes.router.post('/createToolType', routes.checkAuthenticated, async (req, res
   let db = await pool.awaitGetConnection();
   let sql = "INSERT INTO tool SET ?";
   let tool = {
-      toolName: req.query.name,
-      quantity: req.query.quantity
+      toolName: req.body.name,
+      quantity: req.body.quantity
   }
 
   console.log(tool);
