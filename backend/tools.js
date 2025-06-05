@@ -24,7 +24,7 @@ routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
 
 // Creates a new tool type
 // https://kti.com/createToolType?name=newTool
-routes.router.get('/createToolType', routes.checkAuthenticated, async (req, res) => {
+routes.router.post('/createToolType', routes.checkAuthenticated, async (req, res) => {
 
   let db = await pool.awaitGetConnection();
   let sql = "INSERT INTO tool SET ?";
