@@ -58,7 +58,7 @@ routes.router.get('/getUserTools', routes.checkAuthenticated, async (req, res) =
   let db = await pool.awaitGetConnection();
   let sql = 'SELECT * FROM takenTool WHERE accountId = ?';
 
-  let data = await db.awaitQuery(sql, req.query.id);
+  let data = await db.awaitQuery(sql, 'id' in req.query ? req.query.id : req.user.userid);
   res.send(data)
   db.release();
 })
