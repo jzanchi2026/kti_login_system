@@ -68,7 +68,7 @@ routes.router.get('/checkoutTool', routes.checkAuthenticated, async (req, res) =
   let sql = 'INSERT INTO takenTool SET ?';
   let tool = {
     toolTypeId: req.query.id,
-    timeTaken: Date.now().toISOString().slice(0, 19).replace('T', ' '),
+    timeTaken: new Date().toISOString().slice(0, 19).replace('T', ' '),
     accountId: req.user.userid
   }
 
