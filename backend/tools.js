@@ -24,7 +24,7 @@ routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
 
 // Creates a new tool type
 // https://kti.com/createToolType?name=newTool
-routes.router.post('/createToolType', routes.checkAuthenticated, async (req, res) => {
+routes.router.post('/createToolType', routes.checkAdmin, async (req, res) => {
 
   let db = await pool.awaitGetConnection();
   let sql = "INSERT INTO tool SET ?";
@@ -47,6 +47,25 @@ routes.router.post('/createToolType', routes.checkAuthenticated, async (req, res
   });
   db.release();
 })
+
+routes.router.delete('/removeToolType', routes.checkAdmin, async (req, res) => {
+
+  let db = await pool.awaitGetConnection();
+  let sql = "DELETE FROM tool WHERE toolTypeId = ?";
+
+  let success = true;
+  let msg = "";
+
+  await db.query(sql, req.query.id, (error, result) => {
+      if (error) {
+          success = false;
+          msg = error;
+      }
+      res.send({ success: success, msg: msg })
+  });
+  db.release();
+})
+
 
 // End Tools
 
