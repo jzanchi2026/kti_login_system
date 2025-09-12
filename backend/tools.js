@@ -63,7 +63,7 @@ routes.router.get('/getUserTools', routes.checkAuthenticated, async (req, res) =
   db.release();
 })
 
-routes.router.get('/checkoutTool', routes.checkAuthenticated, async (req, res) => {
+routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
   let sql = 'INSERT INTO takenTool SET ?';
   let tool = {

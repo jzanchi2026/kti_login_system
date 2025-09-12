@@ -37,7 +37,7 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
 
       res.redirect('/login')
   } catch {
-      res.redirect('/register')
+      res.redirect('/register') 
   }
 })
 
