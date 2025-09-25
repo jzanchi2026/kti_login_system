@@ -73,7 +73,8 @@ routes.router.get('/loginInfo', routes.privatePage("/loginApiFailure"), (req, re
       login: true,
       email: req.user.email,
       userid: req.user.userid,
-      username: req.user.displayName
+      username: req.user.displayName,
+      userType: req.user.userType
   })
 })
 
@@ -82,7 +83,8 @@ routes.router.get('/loginApiFailure', routes.checkNotAuthenticated, (req, res) =
       login: false,
       email: "",
       userid: 0,
-      username: ""
+      username: "",
+      userType: 0
   })
 })
 
