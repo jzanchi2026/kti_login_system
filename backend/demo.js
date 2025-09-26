@@ -88,14 +88,21 @@ routes.router.get('/approval', routes.checkAdmin, async (req, res) => {
 
 
 routes.router.get('/users', async (req, res) => {
+    let db;
+    try {
+        db = await pool.awaitGetConnection();
+        let sql = 'SELECT * FROM users';
+        let users = await db.awaitQuery(sql);
 
-  let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM users';
-  let users = await db.awaitQuery(sql);
-  res.send(users[0])
-  
-  db.release();
-})
+        // send the full users result as JSON
+        res.json(users);
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).json({ error: 'Failed to fetch users' });
+    } finally {
+        if (db) db.release();
+    }
+});
 
 routes.router.post('/addTool/', async (req, res) => {
   let sql = "INSERT INTO tool SET ?"
