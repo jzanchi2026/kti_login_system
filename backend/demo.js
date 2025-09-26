@@ -92,9 +92,9 @@ routes.router.get('/users', async (req, res) => {
   let db = await pool.awaitGetConnection();
   let sql = 'SELECT * FROM users';
   let users = await db.awaitQuery(sql);
+  res.send(users[0])
+  
   db.release();
-
-  res.render('users.ejs', { users: users, admin: false });
 })
 
 routes.router.post('/addTool/', async (req, res) => {
