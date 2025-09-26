@@ -92,7 +92,7 @@ routes.router.get('/users', async (req, res) => {
   let db = await pool.awaitGetConnection();
   let sql = 'SELECT * FROM users';
   let users = await db.awaitQuery(sql);
-  res.send(users);
+  res.json(users)
   
   db.release();
 })
