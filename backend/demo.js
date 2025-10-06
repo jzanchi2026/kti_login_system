@@ -88,14 +88,16 @@ routes.router.get('/approval', routes.checkAdmin, async (req, res) => {
 
 
 routes.router.get('/users', async (req, res) => {
-
+    
   let db = await pool.awaitGetConnection();
   let sql = 'SELECT * FROM users';
   let users = await db.awaitQuery(sql);
-  db.release();
 
-  res.render('users.ejs', { users: users, admin: false });
-})
+  // Convert RowDataPackets to plain objects
+  let plainUsers = JSON.parse(JSON.stringify(users));
+  res.json(plainUsers);
+  db.release();
+});
 
 routes.router.post('/addTool/', async (req, res) => {
   let sql = "INSERT INTO tool SET ?"
