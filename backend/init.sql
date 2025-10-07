@@ -57,3 +57,23 @@ CREATE TABLE toolHistory(
     foreign key (accountId) references idAccount(id) on delete cascade,
     PRIMARY KEY(toolId)
 );
+
+
+CREATE TABLE material(
+    materialName VARCHAR(50) not null,
+    materialTypeId int not null AUTO_INCREMENT,
+    PRIMARY KEY(materialTypeId)
+);
+
+CREATE TABLE materialHistory(
+    materialTypeId int not null,
+    accountId int not null,
+    timeTaken DATETIME not null,
+    amountTaken int not null,
+    constraint materialTypeConstraint1
+    foreign key (materialTypeId) references material(materialTypeId) on delete cascade,
+    constraint materialHistoryAccount
+    foreign key (accountId) references users(id) on delete cascade,
+    PRIMARY KEY(materialTypeId, accountId, timeTaken)
+);
+

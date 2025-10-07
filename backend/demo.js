@@ -1,13 +1,14 @@
 const routes = require('./util.js')
 const pool = routes.pool;
 
-routes.router.get('/', routes.checkAuthenticated, (req, res) => {
-  res.redirect('/demo');
-  //console.log("body user" + req.body.user);
-  //console.log("req user" + req.user);
-
-  //res.render('index.ejs', { name: req.user.displayName, userid: req.user.userid, email: req.user.email })
-})
+routes.router.get('/demo', routes.checkAuthenticated, (req, res) => {
+    res.json({
+        admin: req.user.userType > 1,
+        name: req.user.displayName,
+        userid: req.user.userid,
+        email: req.user.email
+    });
+});
 
 routes.router.get('/login', routes.checkNotAuthenticated, (req, res) => {
   res.render('login.ejs')
