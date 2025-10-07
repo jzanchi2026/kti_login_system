@@ -90,16 +90,30 @@ routes.router.get('/approval', routes.checkAdmin, async (req, res) => {
 
 
 routes.router.get('/users', async (req, res) => {
-    
-  let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM users';
-  let users = await db.awaitQuery(sql);
-  let id = req.query.id;
+    let db;
+    try {
+        db = await pool.awaitGetConnection();
+        let sql = 'SELECT * FROM users';
+        let users = await db.awaitQuery(sql);
 
-  // Convert RowDataPackets to plain objects
-  let plainUsers = JSON.parse(JSON.stringify(users));
-  res.json(plainUsers);
-  db.release();
+        // Convert RowDataPackets to plain objects
+        let plainUsers = JSON.parse(JSON.stringify(users));
+
+        const id = req.query.id;
+        if (id) {
+            // support numeric id (auto-increment id) or userid string
+            const found = plainUsers.find(u => String(u.id) === String(id) || String(u.userid) === String(id));
+            if (found) return res.json(found);
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json(plainUsers);
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).json({ error: 'Failed to fetch users' });
+    } finally {
+        if (db) db.release();
+    }
 });
 
 routes.router.post('/addTool/', async (req, res) => {

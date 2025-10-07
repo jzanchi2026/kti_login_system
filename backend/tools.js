@@ -7,7 +7,7 @@ routes.router.get('/getTool', routes.checkAuthenticated, async (req, res) => {
   let sql = 'SELECT * FROM tool WHERE toolTypeId = ?';
 
   let data = await db.awaitQuery(sql, req.query.id);
-  res.json(data[0])
+  res.send(data[0])
   db.release();
 })
 
@@ -18,7 +18,7 @@ routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
   let sql = 'SELECT * FROM tool';
 
   let data = await db.awaitQuery(sql);
-  res.json(data)
+  res.send(data)
   db.release();
 })
 
@@ -78,7 +78,7 @@ routes.router.get('/getUserTools', routes.checkAuthenticated, async (req, res) =
   let sql = 'SELECT * FROM takenTool WHERE accountId = ?';
 
   let data = await db.awaitQuery(sql, 'id' in req.query ? req.query.id : req.user.userid);
-  res.json(data)
+  res.send(data)
   db.release();
 })
 
@@ -99,7 +99,7 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
           success = false;
           msg = "An unexpected error has occured, make sure you passed in all fields correctly";
       }
-    res.json({ success: success, msg: msg })
+      res.send({ success: success, msg: msg })
   });
 
   db.release();
