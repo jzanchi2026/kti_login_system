@@ -4,7 +4,7 @@ const pool = routes.pool;
 // https://kti.com/getTool?id=1
 routes.router.get('/getTool', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM tool WHERE toolTypeId = ?';
+  let sql = 'SELECT * FROM singleTools WHERE toolID = ?';
 
   let data = await db.awaitQuery(sql, req.query.id);
   res.json(data[0])
@@ -15,7 +15,7 @@ routes.router.get('/getTool', routes.checkAuthenticated, async (req, res) => {
 // https://kti.com/getTools
 routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM tool';
+  let sql = 'SELECT * FROM singleTools';
 
   let data = await db.awaitQuery(sql);
   res.json(data)
@@ -24,13 +24,13 @@ routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
 
 // Creates a new tool type
 // https://kti.com/createToolType?name=newTool
-routes.router.post('/createToolType', routes.checkAdmin, async (req, res) => {
+routes.router.post('/createTool', routes.checkAdmin, async (req, res) => {
 
   let db = await pool.awaitGetConnection();
-  let sql = "INSERT INTO tool SET ?";
+  let sql = "INSERT INTO singleTools SET ?";
   let tool = {
       toolName: req.body.name,
-      quantity: req.body.quantity
+      takenBy: null
   }
 
   console.log(tool);
@@ -48,10 +48,10 @@ routes.router.post('/createToolType', routes.checkAdmin, async (req, res) => {
   db.release();
 })
 
-routes.router.delete('/removeToolType', routes.checkAdmin, async (req, res) => {
+routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
 
   let db = await pool.awaitGetConnection();
-  let sql = "DELETE FROM tool WHERE toolTypeId  = ?";
+  let sql = "DELETE FROM tool WHERE toolID  = ?";
 
   let success = true;
   let msg = "";
@@ -74,44 +74,22 @@ routes.router.delete('/removeToolType', routes.checkAdmin, async (req, res) => {
 // Gets a list of tools a particular user has taken out
 // https://kti.com/getUserTools?id=1
 routes.router.get('/getUserTools', routes.checkAuthenticated, async (req, res) => {
-  let db;
-  try {
-    db = await pool.awaitGetConnection();
+  let db = await pool.awaitGetConnection();
+  let sql = 'SELECT * FROM singleTools WHERE takenBy = ?';
 
-    // use provided id (query) or current user's userid
-    const accountId = 'id' in req.query ? req.query.id : req.user.userid;
-
-    // join with users to include name/email/userid
-    const sql = `
-      SELECT t.*, u.displayName AS displayName, u.email AS email, u.userid AS userid
-      FROM takenTool t
-      JOIN users u ON t.accountId = u.userid
-      WHERE t.accountId = ?
-    `;
-
-    const data = await db.awaitQuery(sql, [accountId]);
-    res.json(data);
-  } catch (err) {
-    console.error('Error fetching user tools:', err);
-    res.status(500).json({ error: 'Failed to fetch user tools' });
-  } finally {
-    if (db) db.release();
-  }
+  let data = await db.awaitQuery(sql, 'id' in req.query ? req.query.id : req.user.userid);
+  res.json(data)
+  db.release();
 })
 
 routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let sql = 'INSERT INTO takenTool SET ?';
-  let tool = {
-    toolTypeId: req.query.id,
-    timeTaken: new Date().toISOString().slice(0, 19).replace('T', ' '),
-    accountId: req.user.userid
-  }
+  let sql = 'UPDATE singleTools SET takenBy = ? WHERE toolID = ?';
 
   let success = true;
   let msg = "";
 
-  await db.query(sql, tool, (error, result) => {
+  await db.query(sql, [req.user.userid, req.query.id], (error, result) => {
       if (error) {
           success = false;
           msg = "An unexpected error has occured, make sure you passed in all fields correctly";
@@ -124,7 +102,7 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
 
 routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let sql = "DELETE FROM takenTool WHERE toolId  = ?";
+  let sql = "UPDATE singleTools SET takenBy = null WHERE toolID = ?";
 
   let success = true;
   let msg = "";
