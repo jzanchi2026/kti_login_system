@@ -121,7 +121,7 @@ routes.router.post('/createClass', routes.checkAdmin, async (req, res) => {
   }
 })
 
-routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
+routes.router.get('/getClasses', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
   let sql = 'SELECT * FROM idClass';
 
