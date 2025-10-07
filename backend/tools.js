@@ -74,12 +74,29 @@ routes.router.delete('/removeToolType', routes.checkAdmin, async (req, res) => {
 // Gets a list of tools a particular user has taken out
 // https://kti.com/getUserTools?id=1
 routes.router.get('/getUserTools', routes.checkAuthenticated, async (req, res) => {
-  let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM takenTool WHERE accountId = ?';
+  let db;
+  try {
+    db = await pool.awaitGetConnection();
 
-  let data = await db.awaitQuery(sql, 'id' in req.query ? req.query.id : req.user.userid);
-  res.json(data)
-  db.release();
+    // use provided id (query) or current user's userid
+    const accountId = 'id' in req.query ? req.query.id : req.user.userid;
+
+    // join with users to include name/email/userid
+    const sql = `
+      SELECT t.*, u.displayName AS displayName, u.email AS email, u.userid AS userid
+      FROM takenTool t
+      JOIN users u ON t.accountId = u.userid
+      WHERE t.accountId = ?
+    `;
+
+    const data = await db.awaitQuery(sql, [accountId]);
+    res.json(data);
+  } catch (err) {
+    console.error('Error fetching user tools:', err);
+    res.status(500).json({ error: 'Failed to fetch user tools' });
+  } finally {
+    if (db) db.release();
+  }
 })
 
 routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) => {
