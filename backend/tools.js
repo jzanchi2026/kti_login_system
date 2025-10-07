@@ -104,3 +104,21 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
 
   db.release();
 })
+
+routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+  let sql = "DELETE FROM takenTool WHERE toolId  = ?";
+
+  let success = true;
+  let msg = "";
+
+  await db.query(sql, req.query.id, (error, result) => {
+      if (error) {
+          success = false;
+          msg = "An unexpected error has occured, make sure you passed in all fields correctly";
+      }
+      res.send({ success: success, msg: msg })
+  });
+
+  db.release();
+})
