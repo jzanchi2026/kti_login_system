@@ -76,4 +76,3 @@ CREATE TABLE materialHistory(
     foreign key (accountId) references users(id) on delete cascade,
     PRIMARY KEY(materialTypeId, accountId, timeTaken)
 );
-

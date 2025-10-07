@@ -75,10 +75,12 @@ routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
 // https://kti.com/getUserTools?id=1
 routes.router.get('/getUserTools', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
+
   let sql = 'SELECT * FROM singleTools WHERE takenBy = ?';
 
   let data = await db.awaitQuery(sql, 'id' in req.query ? req.query.id : req.user.userid);
   res.json(data)
+
   db.release();
 })
 

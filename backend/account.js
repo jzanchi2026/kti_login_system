@@ -99,3 +99,33 @@ routes.router.get('/viewAdmins', routes.checkAdmin, async (req, res) => {
 })
 
 module.exports = { passport };
+
+
+routes.router.post('/createClass', routes.checkAdmin, async (req, res) => {
+  let db;
+  try {
+    db = await pool.awaitGetConnection();
+    let sql = 'INSERT INTO idClass SET ?';
+    let cls = {
+      className: req.body.name
+    };
+
+    const result = await db.awaitQuery(sql, cls);
+    // result may include insertId depending on driver
+    res.json({ success: true, msg: '', insertId: result && result.insertId ? result.insertId : null });
+  } catch (err) {
+    console.error('Error creating class:', err);
+    res.status(500).json({ success: false, msg: String(err) });
+  } finally {
+    if (db) db.release();
+  }
+})
+
+routes.router.get('/getClasses', routes.checkAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+  let sql = 'SELECT * FROM idClass';
+
+  let data = await db.awaitQuery(sql);
+  res.json(data)
+  db.release();
+})

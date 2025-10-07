@@ -1,15 +1,6 @@
 const routes = require('./util.js')
 const pool = routes.pool;
 
-routes.router.get('/demo', routes.checkAuthenticated, (req, res) => {
-    res.json({
-        admin: req.user.userType > 1,
-        name: req.user.displayName,
-        userid: req.user.userid,
-        email: req.user.email
-    });
-});
-
 routes.router.get('/login', routes.checkNotAuthenticated, (req, res) => {
   res.render('login.ejs')
 })
@@ -84,22 +75,36 @@ routes.router.get('/approval', routes.checkAdmin, async (req, res) => {
   let users = await db.awaitQuery(sql);
   db.release();
 
-  
+
   res.render('approval.ejs', { users: users });
 })
 
 
 routes.router.get('/users', async (req, res) => {
-    
-  let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM users';
-  let users = await db.awaitQuery(sql);
-  let id = req.query.id;
+    let db;
+    try {
+        db = await pool.awaitGetConnection();
+        let sql = 'SELECT * FROM users';
+        let users = await db.awaitQuery(sql);
 
-  // Convert RowDataPackets to plain objects
-  let plainUsers = JSON.parse(JSON.stringify(users));
-  res.json(plainUsers);
-  db.release();
+        // Convert RowDataPackets to plain objects
+        let plainUsers = JSON.parse(JSON.stringify(users));
+
+        const id = req.query.id;
+        if (id) {
+            // support numeric id (auto-increment id) or userid string
+            const found = plainUsers.find(u => String(u.id) === String(id) || String(u.userid) === String(id));
+            if (found) return res.json(found);
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json(plainUsers);
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).json({ error: 'Failed to fetch users' });
+    } finally {
+        if (db) db.release();
+    }
 });
 
 routes.router.post('/addTool/', async (req, res) => {
