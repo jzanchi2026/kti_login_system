@@ -84,7 +84,7 @@ routes.router.get('/approval', routes.checkAdmin, async (req, res) => {
   let users = await db.awaitQuery(sql);
   db.release();
 
-  
+
   res.render('approval.ejs', { users: users });
 })
 
