@@ -121,17 +121,11 @@ routes.router.post('/createClass', routes.checkAdmin, async (req, res) => {
   }
 })
 
-routes.router.get('/getClasses', routes.checkAuthenticated, async (req, res) => {
-  let db;
-  try {
-    db = await pool.awaitGetConnection();
-    let sql = 'SELECT * FROM idClass';
-    let classes = await db.awaitQuery
-    res.json(classes);
-  } catch (err) {
-    console.error('Error fetching classes:', err);
-    res.status(500).json({ error: 'Failed to fetch classes' });
-  } finally {
-    if (db) db.release();
-  }
+routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+  let sql = 'SELECT * FROM idClass';
+
+  let data = await db.awaitQuery(sql);
+  res.json(data)
+  db.release();
 })
