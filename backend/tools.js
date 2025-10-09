@@ -86,6 +86,7 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
   let db = await pool.awaitGetConnection();
   let sql = 'UPDATE singleTools SET takenBy = ? WHERE toolID = ?';
 
+
   let success = true;
   let msg = "";
 
@@ -102,7 +103,7 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
 
 routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let sql = "UPDATE singleTools SET takenBy = null WHERE toolID = ?";
+  let sql = "DELETE FROM takenTool WHERE toolId  = ?";
 
   let success = true;
   let msg = "";
