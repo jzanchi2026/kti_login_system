@@ -129,3 +129,22 @@ routes.router.get('/getClasses', routes.checkAuthenticated, async (req, res) => 
   res.json(data)
   db.release();
 })
+
+routes.router.post('/assignStudentToClass', routes.checkAdmin, async (req, res) => {
+  let db;
+  try {
+    db = await pool.awaitGetConnection();
+    let sql = 'UPDATE users SET classId = ? WHERE userid = ?';
+    let assignment = {
+      classId: req.body.classId,
+      studentId: req.body.studentId
+    };
+    const result = await db.awaitQuery(sql, assignment);
+    res.json({ success: true, msg: '', insertId: result && result.insertId ? result.insertId : null });
+  } catch (err) {
+    console.error('Error assigning student to class:', err);
+    res.status(500).json({ success: false, msg: String(err) });
+  } finally {
+    if (db) db.release();
+  } 
+})
