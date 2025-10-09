@@ -41,7 +41,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 
 const corsOptions = {
-    origin: "https://jzanchi2026.github.io", 
+    origin: "https://gabe123545.github.io", 
     credentials: true,
 };
 app.use(cors(corsOptions));
