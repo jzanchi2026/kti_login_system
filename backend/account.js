@@ -137,7 +137,7 @@ routes.router.post('/assignStudentToClass', routes.checkAdmin, async (req, res) 
     let sql = 'UPDATE users SET classId = ? WHERE userid = ?';
     let assignment = {
       classId: req.body.classId,
-      studentId: req.body.studentId
+      studentId: req.body.id
     };
     const result = await db.awaitQuery(sql, assignment);
     res.json({ success: true, msg: '', insertId: result && result.insertId ? result.insertId : null });
