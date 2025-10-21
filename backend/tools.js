@@ -140,6 +140,7 @@ routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) =>
         if (error) {
           success = false;
           msg = "An unexpected error has occured, make sure you passed in all fields correctly";
+          console.log(error);
         }
       }) 
 
