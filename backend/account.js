@@ -35,10 +35,10 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
       });
       db.release()
 
-      res.redirect('/login')
-  } catch {
-      res.redirect('/register') 
-  }
+    res.redirect('/login')
+} catch {
+    res.redirect('/register') 
+}
 })
 
 routes.router.get('/logout', routes.checkAuthenticated, async (req, res) => {
@@ -139,7 +139,7 @@ routes.router.post('/assignStudentToClass', routes.checkAdmin, async (req, res) 
       classId: req.body.classId,
       studentId: req.body.id
     };
-    const result = await db.awaitQuery(sql, assignment);
+    const result = await db.awaitQuery(sql, [req.body.classId, req.body.id]);
     res.json({ success: true, msg: '', insertId: result && result.insertId ? result.insertId : null });
   } catch (err) {
     console.error('Error assigning student to class:', err);

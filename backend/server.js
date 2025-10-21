@@ -22,7 +22,6 @@ initializePassport(passport,
         //users.find(user => user.email === email)
         let sql = 'SELECT * FROM users WHERE email = ? AND userType > 0';
         let user = await db.awaitQuery(sql, [email]);
-        console.log("User: " + JSON.stringify(user[0]));
         db.release()
         return user[0];
     },

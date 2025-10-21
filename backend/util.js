@@ -13,8 +13,6 @@ const pool = mysql.createPool({
 });
 
 function checkAuthenticated(req, res, next) {
-
-  console.log(req);
   if (req.isAuthenticated()) {
       return next()
   }
@@ -24,7 +22,6 @@ function checkAuthenticated(req, res, next) {
 
 function privatePage(redirect) {
   return function(req, res, next) {
-    console.log(req);
     if (req.isAuthenticated()) {
         return next()
     }
