@@ -134,7 +134,7 @@ routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) =>
         msg = "An unexpected error has occured, make sure you passed in all fields correctly";
       }
 
-      let sql2 = "UPDATE toolHistory SET timeReturned = ? WHERE recordId IN (SELECT recordId FROM toolHistory WHERE toolId = ? AND timeReturned IS NULL ORDER BY ID DESC LIMIT 1)"
+      let sql2 = "UPDATE toolHistory SET timeReturned = ? WHERE recordId = (SELECT recordId FROM toolHistory WHERE toolId = ? AND timeReturned IS NULL ORDER BY ID DESC LIMIT 1)"
 
       await db.query(sql2, [new Date().toISOString().slice(0, 19).replace('T', ' '), req.query.id], (error, result) => {
         if (error) {
