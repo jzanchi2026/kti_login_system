@@ -91,11 +91,30 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
   let success = true;
   let msg = "";
 
-  await db.query(sql, [req.user.userid, req.query.id], (error, result) => {
-      if (error) {
+  await db.query(sql, [req.user.userid, req.query.id], async (error, result) => {
+    if (error) {
+      success = false;
+      msg = "An unexpected error has occured, make sure you passed in all fields correctly";
+    }
+
+    else {
+      let sql2 = "INSERT INTO toolHistory SET ?";
+
+      let record = {
+        toolId: req.query.id,
+        userId: req.user.userid,
+        timeTaken: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        timeReturned: null
+      };
+
+      await db.query(sql2, record, (error, result) => {
+        if (error) {
           success = false;
           msg = "An unexpected error has occured, make sure you passed in all fields correctly";
-      }
+        }
+      });
+    }
+
     res.json({ success: success, msg: msg })
   });
 
@@ -109,11 +128,21 @@ routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) =>
   let success = true;
   let msg = "";
 
-  await db.query(sql, req.query.id, (error, result) => {
+  await db.query(sql, req.query.id, async (error, result) => {
       if (error) {
+        success = false;
+        msg = "An unexpected error has occured, make sure you passed in all fields correctly";
+      }
+
+      let sql2 = "UPDATE toolHistory SET timeReturned = ? WHERE recordId IN (SELECT recordId FROM toolHistory WHERE toolId = ? AND timeReturned IS NULL ORDER BY ID DESC LIMIT 1)"
+
+      await db.query(sql2, [new Date().toISOString().slice(0, 19).replace('T', ' '), req.query.id], (error, result) => {
+        if (error) {
           success = false;
           msg = "An unexpected error has occured, make sure you passed in all fields correctly";
-      }
+        }
+      }) 
+
       res.send({ success: success, msg: msg })
   });
 

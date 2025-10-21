@@ -35,10 +35,10 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
       });
       db.release()
 
-      res.redirect('/login')
-  } catch {
-      res.redirect('/register') 
-  }
+    res.redirect('/login')
+} catch {
+    res.redirect('/register') 
+}
 })
 
 routes.router.get('/logout', routes.checkAuthenticated, async (req, res) => {
