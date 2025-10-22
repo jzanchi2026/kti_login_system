@@ -22,6 +22,27 @@ routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
   db.release();
 })
 
+routes.router.get("/getToolHistory", routes.checkAdmin, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+
+  if (id in req.query) {
+    let sql = 'SELECT * FROM toolHistory WHERE userId = ?';
+
+    let data = await db.awaitQuery(sql, req.query.id);
+    res.json(data);
+  } 
+  else {
+    let sql = 'SELECT * FROM toolHistory WHERE userId = ?';
+
+    let data = await db.awaitQuery(sql); 
+    res.json(data);
+  }
+
+  db.release();
+
+  
+})
+
 // Creates a new tool type
 // https://kti.com/createToolType?name=newTool
 routes.router.post('/createTool', routes.checkAdmin, async (req, res) => {
