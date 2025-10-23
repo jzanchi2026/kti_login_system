@@ -22,25 +22,33 @@ routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
   db.release();
 })
 
-
 routes.router.get("/getToolHistory", routes.checkAdmin, async (req, res) => {
   let db = await pool.awaitGetConnection();
 
-  let sql = 'SELECT * FROM toolHistory';
+  if (id in req.query) {
+    let sql = 'SELECT * FROM toolHistory WHERE userId = ?';
 
-  let data = await db.awaitQuery(sql); 
-  res.json(data);
+    let data = await db.awaitQuery(sql, req.query.id);
+    res.json(data);
+  } 
+  else {
+    let sql = 'SELECT * FROM toolHistory';
+
+    let data = await db.awaitQuery(sql); 
+    res.json(data);
+  }
 
   db.release();  
 })
 
 
-routes.router.get("/getUserHistory", routes.checkAuthenticated, async (req, res) => {
+routes.router.get("/getMyHistory", routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
+
 
   let sql = 'SELECT * FROM toolHistory WHERE userId = ?';
 
-  let data = await db.awaitQuery(sql); 
+  let data = await db.awaitQuery(sql, req.user.userid); 
   res.json(data);
   
   db.release();
@@ -77,12 +85,11 @@ routes.router.post('/createTool', routes.checkAdmin, async (req, res) => {
 routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
 
   let db = await pool.awaitGetConnection();
-  let sql = "DELETE FROM singleTools WHERE toolID  = ?";
-  //Jimmy
+  let sql = "DELETE FROM singleTool WHERE toolID  = ?";
 
   let success = true;
   let msg = "";
- 
+
   await db.query(sql, req.query.id, (error, result) => {
       if (error) {
           success = false;
