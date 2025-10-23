@@ -22,6 +22,7 @@ routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
   db.release();
 })
 
+
 routes.router.get("/getToolHistory", routes.checkAdmin, async (req, res) => {
   let db = await pool.awaitGetConnection();
 
@@ -76,11 +77,12 @@ routes.router.post('/createTool', routes.checkAdmin, async (req, res) => {
 routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
 
   let db = await pool.awaitGetConnection();
-  let sql = "DELETE FROM singleTool WHERE toolID  = ?";
+  let sql = "DELETE FROM singleTools WHERE toolID  = ?";
+  //Jimmy
 
   let success = true;
   let msg = "";
-
+ 
   await db.query(sql, req.query.id, (error, result) => {
       if (error) {
           success = false;
