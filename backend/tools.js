@@ -26,7 +26,7 @@ routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
 routes.router.get("/getToolHistory", routes.checkAdmin, async (req, res) => {
   let db = await pool.awaitGetConnection();
 
-  let sql = 'SELECT * FROM toolHistory WHERE userId = ?';
+  let sql = 'SELECT * FROM toolHistory';
 
   let data = await db.awaitQuery(sql); 
   res.json(data);
