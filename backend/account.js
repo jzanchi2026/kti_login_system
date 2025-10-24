@@ -41,7 +41,7 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
 }
 })
 
-routes.router.get('/logout', routes.checkAuthenticated, async (req, res) => {
+routes.router.get('/logout', routes.checkAuthenticated, async (req, res, next) => {
   req.logOut((err) => {
       if (err) {
           return next(err);
