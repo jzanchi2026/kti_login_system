@@ -77,7 +77,7 @@ routes.router.get('/getUserMaterials', routes.checkAuthenticated, async (req, re
   let db = await pool.awaitGetConnection();
   let sql = 'SELECT * FROM takenMaterial WHERE accountId = ?';
 
-  let data = await db.awaitQuery(sql, 'id' in req.query ? req.query.id : req.user.userid);
+  let data = await db.awaitQuery(sql, 'id' in req.query ? req.query.id : req.user.userId);
   res.send(data)
   db.release();
 })
@@ -89,7 +89,7 @@ routes.router.post('/checkoutMaterial', routes.checkAuthenticated, async (req, r
     materialTypeId: req.query.id,
     quantity: req.query.quantity,
     timeTaken: new Date().toISOString().slice(0, 19).replace('T', ' '),
-    accountId: req.user.userid
+    accountId: req.user.userId
   }
 
   let success = true;
@@ -113,7 +113,7 @@ routes.router.post('/returnMaterial', routes.checkAuthenticated, async (req, res
     materialTypeId: req.query.id,
     quantity: req.query.quantity,
     timeTaken: new Date().toISOString().slice(0, 19).replace('T', ' '),
-    accountId: req.user.userid
+    accountId: req.user.userId
   }
 
   let success = true;

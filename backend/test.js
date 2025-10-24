@@ -14,13 +14,13 @@ describe("Server", () => {
         const res2 = await req.get(res.header["location"]);
         expect(res2.body).toHaveProperty('login');
         expect(res2.body).toHaveProperty('email');
-        expect(res2.body).toHaveProperty('userid');
+        expect(res2.body).toHaveProperty('userId');
         expect(res2.body).toHaveProperty('username');
       }
       else {
         expect(res.body).toHaveProperty('login');
         expect(res.body).toHaveProperty('email');
-        expect(res.body).toHaveProperty('userid');
+        expect(res.body).toHaveProperty('userId');
         expect(res.body).toHaveProperty('username');
       }
     })

@@ -22,7 +22,7 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
 
       let sql = 'INSERT INTO users SET ?';
       let user = {
-          userid: Date.now().toString(),
+          userId: Date.now().toString(),
           displayName: req.body.name,
           email: req.body.email,
           hashPass: hashedPassword,
@@ -41,7 +41,7 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
 }
 })
 
-routes.router.get('/logout', routes.checkAuthenticated, async (req, res) => {
+routes.router.get('/logout', routes.checkAuthenticated, async (req, res, next) => {
   req.logOut((err) => {
       if (err) {
           return next(err);
@@ -72,7 +72,7 @@ routes.router.get('/loginInfo', routes.privatePage("/loginApiFailure"), (req, re
   res.send({
       login: true,
       email: req.user.email,
-      userid: req.user.userid,
+      userId: req.user.userId,
       username: req.user.displayName,
       userType: req.user.userType
   })
@@ -82,7 +82,7 @@ routes.router.get('/loginApiFailure', routes.checkNotAuthenticated, (req, res) =
   res.send({
       login: false,
       email: "",
-      userid: 0,
+      userId: 0,
       username: "",
       userType: 0
   })
