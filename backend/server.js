@@ -28,7 +28,7 @@ initializePassport(passport,
     id = async (id) => {
         let db = await pool.awaitGetConnection();
         //users.find(user => user.email === email)
-        let sql = 'SELECT * FROM users WHERE userid = ?';
+        let sql = 'SELECT * FROM users WHERE userId = ?';
         let user = await db.awaitQuery(sql, [id]);
         db.release()
         return user[0];

@@ -7,7 +7,7 @@ routes.router.get('/login', routes.checkNotAuthenticated, (req, res) => {
 
 routes.router.get('/demo', routes.checkAuthenticated, (req, res) => {
     res.render('test.ejs',
-        { admin: req.user.userType > 1, name: req.user.displayName, userid: req.user.userid, email: req.user.email }
+        { admin: req.user.userType > 1, name: req.user.displayName, userId: req.user.userId, email: req.user.email }
     )
 })
 
@@ -93,7 +93,7 @@ routes.router.get('/users', async (req, res) => {
         const id = req.query.id;
         if (id) {
             // support numeric id (auto-increment id) or userid string
-            const found = plainUsers.find(u => String(u.id) === String(id) || String(u.userid) === String(id));
+            const found = plainUsers.find(u => String(u.id) === String(id) || String(u.useriD) === String(id));
             if (found) return res.json(found);
             return res.status(404).json({ error: 'User not found' });
         }

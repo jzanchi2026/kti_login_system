@@ -48,7 +48,7 @@ routes.router.get("/getMyHistory", routes.checkAuthenticated, async (req, res) =
 
   let sql = 'SELECT * FROM toolHistory WHERE userId = ?';
 
-  let data = await db.awaitQuery(sql, req.user.userid); 
+  let data = await db.awaitQuery(sql, req.user.userId); 
   res.json(data);
   
   db.release();
@@ -112,7 +112,7 @@ routes.router.get('/getUserTools', routes.checkAuthenticated, async (req, res) =
 
   let sql = 'SELECT * FROM singleTools WHERE takenBy = ?';
 
-  let data = await db.awaitQuery(sql, 'id' in req.query ? req.query.id : req.user.userid);
+  let data = await db.awaitQuery(sql, 'id' in req.query ? req.query.id : req.user.userId);
   res.json(data)
 
   db.release();
@@ -125,7 +125,7 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
   let success = true;
   let msg = "";
 
-  await db.query(sql, [req.user.userid, req.query.id], async (error, result) => {
+  await db.query(sql, [req.user.userId, req.query.id], async (error, result) => {
     if (error) {
       success = false;
       msg = "An unexpected error has occured, make sure you passed in all fields correctly";
@@ -136,7 +136,7 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
 
       let record = {
         toolId: req.query.id,
-        userId: req.user.userid,
+        userId: req.user.userId,
         timeTaken: new Date().toISOString().slice(0, 19).replace('T', ' '),
         timeReturned: null
       };
