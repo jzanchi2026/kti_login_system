@@ -36,9 +36,9 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
       db.release()
 
     res.redirect('/login')
-} catch {
+  } catch {
     res.redirect('/register') 
-}
+  }
 })
 
 routes.router.get('/logout', routes.checkAuthenticated, async (req, res, next) => {
@@ -51,7 +51,6 @@ routes.router.get('/logout', routes.checkAuthenticated, async (req, res, next) =
 });
 
 routes.router.delete('/logout', (req, res, next) => {
-
   req.logOut((err) => {
       if (err) {
           return next(err);

@@ -13,7 +13,7 @@ const pool = mysql.createPool({
 });
 
 function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && req.user.userType >= 1) {
       return next()
   }
 
