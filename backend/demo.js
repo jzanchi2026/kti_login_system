@@ -18,7 +18,7 @@ routes.router.get('/addMaterial', routes.checkAdmin, (req, res) => {
     res.render('addMaterial.ejs')
 })
 routes.router.get('/tools', routes.checkAuthenticated, async (req, res) => {
-    let db = await pool.awaitGetConnection();;
+    let db = await pool.awaitGetConnection();
     let sql = 'SELECT toolName, toolTypeId from tool';
     let tools = await db.awaitQuery(sql);
     res.render('tools.ejs', {
@@ -26,8 +26,9 @@ routes.router.get('/tools', routes.checkAuthenticated, async (req, res) => {
         admin: req.user.userType > 1
     })
 })
+
 routes.router.get('/materials', routes.checkAuthenticated, async (req, res) => {
-    let db = await pool.awaitGetConnection();;
+    let db = await pool.awaitGetConnection();
     let sql = 'SELECT materialName, materialId from material';
     let materials = await db.awaitQuery(sql);
     db.release();
@@ -38,7 +39,7 @@ routes.router.get('/materials', routes.checkAuthenticated, async (req, res) => {
 })
 
 routes.router.get('/tool', routes.checkAuthenticated, async (req, res) => {
-    let db = await pool.awaitGetConnection();;
+    let db = await pool.awaitGetConnection();
     let sql = 'SELECT toolName FROM tool WHERE toolTypeId = ?';
 
     let toolName = await db.awaitQuery(sql, req.query.id);
@@ -54,7 +55,7 @@ routes.router.get('/tool', routes.checkAuthenticated, async (req, res) => {
 })
 
 routes.router.get('/material', routes.checkAuthenticated, async (req, res) => {
-    let db = await pool.awaitGetConnection();;
+    let db = await pool.awaitGetConnection();
     let sql = 'SELECT materialName FROM material WHERE materialId = ?';
 
     let materialName = await db.awaitQuery(sql, req.query.id);
@@ -112,7 +113,7 @@ routes.router.post('/addTool/', async (req, res) => {
   let tool = {
       toolName: req.body.toolName
   }
-  let db = await pool.awaitGetConnection();;
+  let db = await pool.awaitGetConnection();
   db.query(sql, tool, (error, result) => {
       if (error) throw error;
   });
@@ -128,7 +129,7 @@ routes.router.post('/addMaterial/', async (req, res) => {
       amount: 0
   }
 
-  let db = await pool.awaitGetConnection();;
+  let db = await pool.awaitGetConnection();
   db.query(sql, material, (error, result) => {
       if (error) throw error;
   });
