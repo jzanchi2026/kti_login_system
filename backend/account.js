@@ -35,9 +35,9 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
       });
       db.release()
 
-    res.redirect('/login')
+    res.json({"success": true})
   } catch {
-    res.redirect('/register') 
+    res.json({"success": false})
   }
 })
 
