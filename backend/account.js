@@ -18,30 +18,31 @@ routes.router.post('/approval/', routes.checkAdmin, async (req, res) => {
 
 routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) => {
   try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
-      let sql = 'INSERT INTO users SET ?';
-      let user = {
-          userId: Date.now().toString(),
-          displayName: req.body.name,
-          email: req.body.email,
-          hashPass: hashedPassword,
-          userType: 0,
-      };
+    let sql = 'INSERT INTO users SET ?';
+    let user = {
+        userId: Date.now().toString(),
+        displayName: req.body.name,
+        email: req.body.email,
+        hashPass: hashedPassword,
+        userType: 0,
+    };
 
-      let db = await pool.awaitGetConnection();
-      await db.query(sql, user, (error, result) => {
-          if (error) {
-            console.log(error);
-            throw error;
-          }
-      });
-      db.release()
+    let db = await pool.awaitGetConnection();
+    await db.query(sql, user, (error, result) => {
+        if (error) {
+          console.log(error);
+          throw error;
+        }
+    });
+    db.release()
 
     res.json({success: true, error: ""})
   } catch (e) {
+    console.log("REACHING HERE!!!!!!!!!")
     res.json({success: false, error: e})
-  }
+  } 
 })
 
 routes.router.get('/logout', routes.checkAuthenticated, async (req, res, next) => {
