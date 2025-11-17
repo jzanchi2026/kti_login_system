@@ -129,6 +129,15 @@ routes.router.get('/getClasses', routes.checkAuthenticated, async (req, res) => 
   db.release();
 })
 
+routes.router.get('/getUsers', routes.checkAdmin, async (req, res) => {
+  let db = await pool.awaitGetConnection();;
+  let sql = 'SELECT * FROM users';
+  let admins = await db.awaitQuery(sql);
+  
+  res.json(admins)
+  db.release();
+})
+
 routes.router.post('/assignStudentToClass', routes.checkAdmin, async (req, res) => {
   let db;
   try {
