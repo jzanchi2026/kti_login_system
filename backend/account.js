@@ -30,7 +30,7 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
       };
 
       let db = await pool.awaitGetConnection();
-      db.query(sql, user, (error, result) => {
+      await db.query(sql, user, (error, result) => {
           if (error) throw error;
       });
       db.release()
