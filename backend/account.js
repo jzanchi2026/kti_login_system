@@ -1,5 +1,6 @@
 const routes = require('./util.js')
 const passport = require('passport')
+const bcrypt = require('bcrypt')
 const pool = routes.pool;
 
 routes.router.post('/approval/', routes.checkAdmin, async (req, res) => {
@@ -18,27 +19,31 @@ routes.router.post('/approval/', routes.checkAdmin, async (req, res) => {
 
 routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) => {
   try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
-      let sql = 'INSERT INTO users SET ?';
-      let user = {
-          userId: Date.now().toString(),
-          displayName: req.body.name,
-          email: req.body.email,
-          hashPass: hashedPassword,
-          userType: 0,
-      };
+    let sql = 'INSERT INTO users SET ?';
+    let user = {
+        userId: Date.now().toString(),
+        displayName: req.body.name,
+        email: req.body.email,
+        hashPass: hashedPassword,
+        userType: 0,
+    };
 
-      let db = await pool.awaitGetConnection();
-      db.query(sql, user, (error, result) => {
-          if (error) throw error;
-      });
-      db.release()
+    let db = await pool.awaitGetConnection();
+    await db.query(sql, user, (error, result) => {
+        if (error) {
+          console.log(error);
+          throw error;
+        }
+    });
+    db.release()
 
-    res.redirect('/login')
-  } catch {
-    res.redirect('/register') 
-  }
+    res.json({success: true, error: ""})
+  } catch (e) {
+    console.log("REACHING HERE!!!!!!!!! " + e)
+    res.json({success: false, error: e})
+  } 
 })
 
 routes.router.get('/logout', routes.checkAuthenticated, async (req, res, next) => {
@@ -126,6 +131,15 @@ routes.router.get('/getClasses', routes.checkAuthenticated, async (req, res) => 
 
   let data = await db.awaitQuery(sql);
   res.json(data)
+  db.release();
+})
+
+routes.router.get('/getUsers', routes.checkAdmin, async (req, res) => {
+  let db = await pool.awaitGetConnection();;
+  let sql = 'SELECT * FROM users';
+  let admins = await db.awaitQuery(sql);
+  
+  res.json(admins)
   db.release();
 })
 

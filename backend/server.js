@@ -4,7 +4,6 @@ if (process.env.NODE_ENV !== 'production') {
 
 const express = require('express')
 const app = express()
-const bcrypt = require('bcrypt')
 const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
