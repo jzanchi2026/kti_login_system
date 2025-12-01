@@ -83,6 +83,24 @@ routes.router.get('/getUserMaterials', routes.checkAuthenticated, async (req, re
   db.release();
 })
 
+routes.router.get('/getMaterialHistories', routes.checkAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+  let sql = 'SELECT * FROM materialHistory';
+
+  let data = await db.awaitQuery(sql);
+  res.send(data)
+  db.release();
+})
+
+routes.router.get('/getMaterialHistory', routes.checkAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+  let sql = 'SELECT * FROM materialHistory WHERE toolId = ?';
+
+  let data = await db.awaitQuery(sql, req.query.id);
+  res.send(data)
+  db.release();
+})
+
 routes.router.post('/checkoutMaterial', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
 
