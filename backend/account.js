@@ -41,7 +41,6 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
 
     res.json({success: true, error: ""})
   } catch (e) {
-    console.log("REACHING HERE!!!!!!!!! " + e)
     res.json({success: false, error: e})
   } 
 })
