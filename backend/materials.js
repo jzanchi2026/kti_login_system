@@ -94,9 +94,9 @@ routes.router.get('/getMaterialHistories', routes.checkAuthenticated, async (req
 
 routes.router.get('/getMaterialHistory', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM materialHistory WHERE toolId = ?';
+  let sql = 'SELECT * FROM materialHistory WHERE materialId = ?';
 
-  let data = await db.awaitQuery(sql, req.query.id);
+  let data = await db.awaitQuery(sql,req.query.id);
   res.send(data)
   db.release();
 })

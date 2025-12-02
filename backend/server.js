@@ -12,6 +12,7 @@ var cors = require('cors')
 require("./demo.js");
 const passport = require("./account.js").passport;
 require("./tools.js");
+require("./materials.js");
 require("./barcode.js");
 const pool = routes.pool;
 
