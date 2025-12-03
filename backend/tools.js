@@ -62,6 +62,26 @@ routes.router.get("/getMyHistory", routes.checkAuthenticated, async (req, res) =
   
 })
 
+const multer  = require('multer')
+const upload = multer({ dest: 'public/images/' })
+app.post('/addToolPicture', upload.single('picture'), async function (req, res, next) {
+  let db = await pool.awaitGetConnection();
+  let sql = 'UPDATE singleTools SET toolPicture = ? WHERE toolId = ?';
+
+  let success = true;
+  let msg = "";
+
+  await db.query(sql, [req.file, req.body.toolId], (error, result) => {
+      if (error) {
+          success = false;
+          msg = error;
+      }
+      res.send({ success: success, msg: msg })
+  });
+  db.release();
+})
+
+
 // Creates a new tool type
 // https://kti.com/createToolType?name=newTool
 routes.router.post('/createTool', routes.checkAdmin, async (req, res) => {
@@ -91,7 +111,7 @@ routes.router.post('/createTool', routes.checkAdmin, async (req, res) => {
 routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
 
   let db = await pool.awaitGetConnection();
-  let sql = "DELETE FROM singleTools WHERE toolID  = ?";
+  let sql = "DELETE FROM singleTools WHERE toolId  = ?";
 
   let success = true;
   let msg = "";

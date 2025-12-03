@@ -9,6 +9,7 @@ const session = require('express-session')
 const methodOverride = require('method-override')
 const routes = require('./util.js')
 var cors = require('cors')
+
 require("./demo.js");
 const passport = require("./account.js").passport;
 require("./tools.js");

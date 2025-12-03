@@ -16,7 +16,8 @@
     "pg": "^8.11.3",
     "pg-pool": "^3.6.1",
     "query-string": "^8.1.0",
-    "cors": "2.8.5"
+    "cors": "2.8.5",
+    "multer": "2.0.2"
   },
   "devDependencies": {
     "jest": "^29.7.0",
