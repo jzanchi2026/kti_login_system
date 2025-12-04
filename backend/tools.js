@@ -64,7 +64,7 @@ routes.router.get("/getMyHistory", routes.checkAuthenticated, async (req, res) =
 
 const multer  = require('multer')
 const upload = multer({ dest: 'public/images/' })
-app.post('/addToolPicture', upload.single('picture'), async function (req, res, next) {
+routes.router.post('/addToolPicture', upload.single('picture'), async function (req, res, next) {
   let db = await pool.awaitGetConnection();
   let sql = 'UPDATE singleTools SET toolPicture = ? WHERE toolId = ?';
 
