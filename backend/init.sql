@@ -19,7 +19,7 @@ CREATE TABLE users(
     classId int,
     id int NOT NULL AUTO_INCREMENT,
     PRIMARY KEY(id)
-);
+);vscode-file://vscode-app/c:/Users/oliver/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-browser/workbench/workbench.html
 
 CREATE TABLE idClass(
     className VARCHAR(50) not null,

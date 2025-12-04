@@ -105,6 +105,7 @@ routes.router.post('/checkoutMaterial', routes.checkAuthenticated, async (req, r
   let db = await pool.awaitGetConnection();
 
   let test = 'SELECT * FROM material WHERE materialId = ?'
+  console.log(req.query.id)
   let data = await db.awaitQuery(test, req.query.id);
 
   if (data.length == 0) {

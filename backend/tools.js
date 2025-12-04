@@ -111,12 +111,12 @@ routes.router.post('/createTool', routes.checkAdmin, async (req, res) => {
 routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
 
   let db = await pool.awaitGetConnection();
-  let sql = "DELETE FROM singleTools WHERE toolId  = ?";
+  let sql = "DELETE FROM singleTools WHERE toolId  = ?; DELETE FROM toolHistory WHERE toolId = ?;";
 
   let success = true;
   let msg = "";
 
-  await db.query(sql, req.query.id, (error, result) => {
+  await db.query(sql, [req.query.id, req.query.id], (error, result) => {
       if (error) {
           success = false;
           msg = error;
