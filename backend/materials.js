@@ -126,6 +126,7 @@ routes.router.post('/checkoutMaterial', routes.checkAuthenticated, async (req, r
     let material = {
       materialId: req.query.id,
       takenQuantity: req.query.quantity,
+      returnedQuantity: 0,  
       timeTaken: new Date().toISOString().slice(0, 19).replace('T', ' '),
       userId: req.user.userId
     }
