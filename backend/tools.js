@@ -11,6 +11,25 @@ routes.router.get('/getTool', routes.checkAuthenticated, async (req, res) => {
   db.release();
 })
 
+routes.router.get('/getToolTags', routes.checkAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+  let sql = 'SELECT * FROM toolTag WHERE toolId = ? INNER JOIN tag ON tag.tagId = toolTag.tagId';
+
+  let data = await db.awaitQuery(sql, req.query.id);
+  res.json(data)
+  db.release();
+})
+
+routes.router.get('/getTaggedTools', routes.checkAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+  let sql = 'SELECT * FROM toolTag WHERE toolId = ? INNER JOIN tool ON toolId = toolTag.toolId';
+
+  let data = await db.awaitQuery(sql, req.query.id);
+  res.json(data)
+  db.release();
+})
+
+
 // Gets the list of tools
 // https://kti.com/getTools
 routes.router.get('/getTools', routes.checkAuthenticated, async (req, res) => {
@@ -91,6 +110,30 @@ routes.router.post('/createTool', routes.checkAdmin, async (req, res) => {
   let tool = {
       toolName: req.body.name,
       takenBy: null
+  }
+
+  console.log(tool);
+
+  let success = true;
+  let msg = "";
+
+  await db.query(sql, tool, (error, result) => {
+      if (error) {
+          success = false;
+          msg = error;
+      }
+      res.send({ success: success, msg: msg })
+  });
+  db.release();
+})
+
+routes.router.post('/tagTool', routes.checkAdmin, async (req, res) => {
+
+  let db = await pool.awaitGetConnection();
+  let sql = "INSERT INTO toolTag SET ?";
+  let tool = {
+      toolId: req.body.toolId,
+      tagId: req.body.tagId
   }
 
   console.log(tool);
