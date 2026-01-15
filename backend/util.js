@@ -3,10 +3,10 @@ const router = express.Router();
 
 const mysql = require('mysql-await')
 const pool = mysql.createPool({
-  host: "ktprog.com",
-  user: "ktinventory",
-  password: "Keefe!2024!Invent",
-  database: "ktinventory",
+  host: process.env.SQL_HOST,
+  user: process.env.SQL_USER,
+  password: process.env.SQL_PASSWORD,
+  database: process.env.SQL_DATABASE,
   connectionLimit: 20,
   connectTimeout: 50000,
   acquireTimeout: 50000,
