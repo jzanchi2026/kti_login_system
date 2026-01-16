@@ -10,11 +10,13 @@ routes.router.post('/approval/', routes.checkAdmin, async (req, res) => {
 
   let sql = 'UPDATE users SET userType = 1 WHERE userid = ?';
   let db = await pool.awaitGetConnection();
+
   db.query(sql, id, (error, result) => {
-      if (error) throw error;
+    if (error) res.json({success: false, error: error});
   });
+  
   db.release()
-  res.redirect("/approval");
+  res.json({success: true, error: ""})
 })
 
 routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) => {
