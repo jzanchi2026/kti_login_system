@@ -188,7 +188,7 @@ routes.router.post('/returnMaterial', routes.checkAuthenticated, async (req, res
     let msg = "";
 
     await db.query(sql, [material, record], async (error, result) => {
-      if (error) {
+      if (error) {  
         success = false;
         msg = "An unexpected error has occured, make sure you passed in all fields correctly";
         res.status(500).send({ success: success, msg: msg })

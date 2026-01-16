@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 const pool = routes.pool;
 
 routes.router.post('/approval/', routes.checkAdmin, async (req, res) => {
-  let id = req.body.aproveid;
+  let id = req.body.approveid;
 
   console.log(id);
 
