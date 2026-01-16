@@ -8,13 +8,16 @@ routes.router.post('/approval/', routes.checkAdmin, async (req, res) => {
 
   console.log(id);
 
-  let sql = 'UPDATE users SET userType = 1 WHERE userid = ?';
+  let sql = 'UPDATE users SET userType = 1 WHERE userId = ?';
   let db = await pool.awaitGetConnection();
 
   db.query(sql, id, (error, result) => {
-    if (error) res.json({success: false, error: error});
+    if (error) {
+      console.log(error);
+      res.json({success: false, error: error});
+    }
   });
-  
+
   db.release()
   res.json({success: true, error: ""})
 })
