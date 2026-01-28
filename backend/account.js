@@ -8,10 +8,10 @@ routes.router.post('/approval', routes.checkAdmin, async (req, res) => {
 
   console.log(id);
 
-  let sql = 'UPDATE users SET userType = 1 WHERE userId = ?';
+  let sql = 'UPDATE users SET userType = 1 WHERE userId = ? AND shopId = ?';
   let db = await pool.awaitGetConnection();
 
-  db.query(sql, id, (error, result) => {
+  db.query(sql, [id, req.user.shopId], (error, result) => {
     if (error) {
       console.log(error);
       res.json({success: false, error: error});
@@ -83,7 +83,8 @@ routes.router.get('/loginInfo', routes.privatePage("/loginApiFailure"), (req, re
       email: req.user.email,
       userId: req.user.userId,
       username: req.user.displayName,
-      userType: req.user.userType
+      userType: req.user.userType,
+      shopId: req.user.shopId
   })
 })
 
@@ -93,14 +94,15 @@ routes.router.get('/loginApiFailure', routes.checkNotAuthenticated, (req, res) =
       email: "",
       userId: 0,
       username: "",
-      userType: 0
+      userType: 0,
+      shopId: 0
   })
 })
 
 routes.router.get('/viewAdmins', routes.checkAdmin, async (req, res) => {
   let db = await pool.awaitGetConnection();;
-  let sql = 'SELECT displayName FROM users WHERE userType = 2';
-  let admins = await db.awaitQuery(sql);
+  let sql = 'SELECT displayName FROM users WHERE userType = 2 AND shopId = ?';
+  let admins = await db.awaitQuery(sql, req.user.shopId);
   db.release();
   res.render('viewAdmins.ejs', {
       admins: admins
@@ -116,7 +118,8 @@ routes.router.post('/createClass', routes.checkAdmin, async (req, res) => {
     db = await pool.awaitGetConnection();
     let sql = 'INSERT INTO idClass SET ?';
     let cls = {
-      className: req.body.name
+      className: req.body.name,
+      shopId: req.user.shopId
     };
 
     const result = await db.awaitQuery(sql, cls);
@@ -132,17 +135,17 @@ routes.router.post('/createClass', routes.checkAdmin, async (req, res) => {
 
 routes.router.get('/getClasses', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM idClass';
+  let sql = 'SELECT * FROM idClass where shopId = ?';
 
-  let data = await db.awaitQuery(sql);
+  let data = await db.awaitQuery(sql, req.user.shopId);
   res.json(data)
   db.release();
 })
 
 routes.router.get('/getUsers', routes.checkAdmin, async (req, res) => {
   let db = await pool.awaitGetConnection();;
-  let sql = 'SELECT * FROM users';
-  let admins = await db.awaitQuery(sql);
+  let sql = 'SELECT * FROM users where shopId = ?';
+  let admins = await db.awaitQuery(sql, req.user.shopId);
   
   res.json(admins)
   db.release();
@@ -152,12 +155,8 @@ routes.router.post('/assignStudentToClass', routes.checkAdmin, async (req, res) 
   let db;
   try {
     db = await pool.awaitGetConnection();
-    let sql = 'UPDATE users SET classId = ? WHERE userid = ?';
-    let assignment = {
-      classId: req.body.classId,
-      studentId: req.body.id
-    };
-    const result = await db.awaitQuery(sql, [req.body.classId, req.body.id]);
+    let sql = 'UPDATE users SET classId = ? WHERE userid = ? AND shopId = ?';
+    const result = await db.awaitQuery(sql, [req.body.classId, req.body.id, req.body.shopId]);
     res.json({ success: true, msg: '', insertId: result && result.insertId ? result.insertId : null });
   } catch (err) {
     console.error('Error assigning student to class:', err);

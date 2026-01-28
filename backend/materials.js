@@ -105,9 +105,9 @@ routes.router.get('/getMaterialHistory', routes.checkAuthenticated, async (req, 
 routes.router.post('/checkoutMaterial', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
 
-  let test = 'SELECT * FROM material WHERE materialId = ?'
+  let test = 'SELECT * FROM material WHERE materialId = ? AND shopId = ?'
   console.log(req.query.id)
-  let data = await db.awaitQuery(test, req.query.id);
+  let data = await db.awaitQuery(test, [req.query.id, req.user.shopId]);
 
   if (data.length == 0) {
     res.status(400).send({
