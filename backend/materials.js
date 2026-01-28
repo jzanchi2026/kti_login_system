@@ -31,7 +31,8 @@ routes.router.post('/createMaterialType', routes.checkAdmin, async (req, res) =>
   let material = {
       materialName: req.body.name,
       amount: req.body.quantity,
-      currentAmount: req.body.quantity
+      currentAmount: req.body.quantity,
+      shopId: req.user.shopId
   }
 
   console.log(material);

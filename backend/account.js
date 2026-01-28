@@ -28,10 +28,11 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
 
     let sql = 'INSERT INTO users SET ?';
     let user = {
-        userId: Date.now().toString(),
+        userId: Date.now().toString(),    
         displayName: req.body.name,
         email: req.body.email,
         hashPass: hashedPassword,
+        shopId: 0,
         userType: 0,
     };
 

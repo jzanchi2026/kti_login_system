@@ -109,7 +109,8 @@ routes.router.post('/createTool', routes.checkAdmin, async (req, res) => {
   let sql = "INSERT INTO singleTools SET ?";
   let tool = {
       toolName: req.body.name,
-      takenBy: null
+      takenBy: null,
+      shopId: req.user.shopId
   }
 
   console.log(tool);
