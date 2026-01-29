@@ -166,7 +166,7 @@ routes.router.post('/assignStudentToClass', routes.checkAdmin, async (req, res) 
   try {
     db = await pool.awaitGetConnection();
     let sql = 'UPDATE users SET classId = ? WHERE userid = ? AND shopId = ?';
-    const result = await db.awaitQuery(sql, [req.body.classId, req.body.id, req.body.shopId]);
+    const result = await db.awaitQuery(sql, [req.body.classId, req.body.id, req.user.shopId]);
     res.json({ success: true, msg: '', insertId: result && result.insertId ? result.insertId : null });
   } catch (err) {
     console.error('Error assigning student to class:', err);
