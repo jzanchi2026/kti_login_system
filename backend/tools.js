@@ -169,7 +169,13 @@ routes.router.post('/tagTool', routes.checkAdmin, async (req, res) => {
 
 routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
 
+  
+
+  let db = await pool.awaitGetConnection();
+
+  let sql = "DELETE FROM singleTools WHERE toolId  = ?";
   let test = 'SELECT * FROM singleTools WHERE toolId = ? AND shopId = ?'
+
   let data = await db.awaitQuery(test, [req.query.id, req.user.shopId]);
 
   if (data.length == 0) {
@@ -181,10 +187,7 @@ routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
     db.release();
     return;
   }
-
-  let db = await pool.awaitGetConnection();
-  let sql = "DELETE FROM singleTools WHERE toolId  = ?";
-
+  
   let success = true;
   let msg = "";
 
