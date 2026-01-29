@@ -13,7 +13,7 @@ routes.router.get('/getTool', routes.checkAuthenticated, async (req, res) => {
 
 routes.router.get('/getToolTags', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM toolTag WHERE toolId = ? INNER JOIN tag ON tag.tagId = toolTag.tagId INNER JOIN tool on tool.toolId = toolTag.toolId and tool.shopId = ?';
+  let sql = 'SELECT * FROM toolTag WHERE toolId = ? INNER JOIN tag ON tag.tagId = toolTag.tagId INNER JOIN singleTools on singleTools.toolId = toolTag.toolId and singleTools.shopId = ?';
 
   let data = await db.awaitQuery(sql, [req.query.id, req.user.shopId]);
   res.json(data)
@@ -22,7 +22,7 @@ routes.router.get('/getToolTags', routes.checkAuthenticated, async (req, res) =>
 
 routes.router.get('/getTaggedTools', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM toolTag WHERE toolId = ? INNER JOIN tool ON tool.toolId = toolTag.toolId and tool.shopId = ?';
+  let sql = 'SELECT * FROM toolTag WHERE toolId = ? INNER JOIN singleTools ON singleTools.toolId = toolTag.toolId and singleTools.shopId = ?';
 
   let data = await db.awaitQuery(sql, [req.query.id, req.user.shopId]);
   res.json(data)
@@ -45,19 +45,19 @@ routes.router.get("/getToolHistory", routes.checkAdmin, async (req, res) => {
   let db = await pool.awaitGetConnection();
 
   if ("userId" in req.query) {
-    let sql = 'SELECT recordId, toolId, userId, timeTaken, timeReturned FROM toolHistory WHERE userId = ? INNER JOIN tool ON tool.toolId = toolHistory.toolId AND tool.shopId = ?';
+    let sql = 'SELECT recordId, toolId, userId, timeTaken, timeReturned FROM toolHistory WHERE userId = ? INNER JOIN singleTools ON singleTools.toolId = toolHistory.toolId AND tool.shopId = ?';
 
     let data = await db.awaitQuery(sql, [req.query.toolId, req.user.shopId]);
     res.json(data);
   } 
   else if ("toolId" in req.query) {
-    let sql = 'SELECT recordId, toolId, userId, timeTaken, timeReturned FROM toolHistory WHERE toolId = ? INNER JOIN tool ON tool.toolId = toolHistory.toolId AND tool.shopId = ?';
+    let sql = 'SELECT recordId, toolId, userId, timeTaken, timeReturned FROM toolHistory WHERE toolId = ? INNER JOIN singleTools ON singleTools.toolId = toolHistory.toolId AND singleTools.shopId = ?';
 
     let data = await db.awaitQuery(sql, [req.query.toolId, req.user.shopId]);
     res.json(data);
   } 
   else {
-    let sql = 'SELECT recordId, toolId, userId, timeTaken, timeReturned FROM toolHistory INNER JOIN tool ON tool.toolId = toolHistory.toolId AND tool.shopId = ?';
+    let sql = 'SELECT recordId, toolId, userId, timeTaken, timeReturned FROM toolHistory INNER JOIN singleTools ON singleTools.toolId = toolHistory.toolId AND singleTools.shopId = ?';
 
     let data = await db.awaitQuery(sql, req.user.shopId); 
     res.json(data);
@@ -133,7 +133,7 @@ routes.router.post('/tagTool', routes.checkAdmin, async (req, res) => {
 
   let db = await pool.awaitGetConnection();
 
-  let test = 'SELECT * FROM tool WHERE toolId = ? AND shopId = ?'
+  let test = 'SELECT * FROM singleTools WHERE toolId = ? AND shopId = ?'
   let data = await db.awaitQuery(test, [req.query.toolId, req.user.shopId]);
 
   if (data.length == 0) {
@@ -169,7 +169,7 @@ routes.router.post('/tagTool', routes.checkAdmin, async (req, res) => {
 
 routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
 
-  let test = 'SELECT * FROM tool WHERE toolId = ? AND shopId = ?'
+  let test = 'SELECT * FROM singleTools WHERE toolId = ? AND shopId = ?'
   let data = await db.awaitQuery(test, [req.query.id, req.user.shopId]);
 
   if (data.length == 0) {
@@ -219,7 +219,7 @@ routes.router.get('/getUserTools', routes.checkAuthenticated, async (req, res) =
 routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
 
-  let test = 'SELECT * FROM tool WHERE toolId = ? AND shopId = ?'
+  let test = 'SELECT * FROM singleTools WHERE toolId = ? AND shopId = ?'
   let data = await db.awaitQuery(test, [req.query.id, req.user.shopId]);
 
   if (data.length == 0) {
@@ -279,7 +279,7 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
 routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
 
-  let test = 'SELECT * FROM tool WHERE toolId = ? AND shopId = ?'
+  let test = 'SELECT * FROM singleTools WHERE toolId = ? AND shopId = ?'
   let data = await db.awaitQuery(test, [req.query.id, req.user.shopId]);
 
   if (data.length == 0) {
@@ -333,7 +333,7 @@ routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) =>
 routes.router.post('/forceReturnTool', routes.checkAdmin, async (req, res) => {
   let db = await pool.awaitGetConnection();
 
-  let test = 'SELECT * FROM tool WHERE toolId = ? AND shopId = ?'
+  let test = 'SELECT * FROM singleTools WHERE toolId = ? AND shopId = ?'
   let data = await db.awaitQuery(test, [req.query.id, req.user.shopId]);
 
   if (data.length == 0) {
