@@ -234,7 +234,7 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
     db.release();
     return;
   }
-  else if (data.takenBy != null) {
+  else if (data[0].takenBy != null) {
     res.status(403).send({
       success: false,
       msg: "Already taken out"
@@ -294,7 +294,7 @@ routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) =>
     db.release();
     return;
   }
-  else if (data.takenBy != req.user.userId) {
+  else if (data[0].takenBy != req.user.userId) {
     res.status(403).send({
       success: false,
       msg: "Cannot return"
@@ -348,8 +348,7 @@ routes.router.post('/forceReturnTool', routes.checkAdmin, async (req, res) => {
     db.release();
     return;
   }
-  else if (data.takenBy == null) {
-    console.log(data);
+  else if (data[0].takenBy == null) {
     res.status(403).send({
       success: false,
       msg: "Not taken out"
