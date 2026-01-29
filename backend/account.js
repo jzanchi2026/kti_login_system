@@ -23,6 +23,16 @@ routes.router.post('/approval', routes.checkAdmin, async (req, res) => {
 })
 
 routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) => {
+  let test = 'SELECT shopId FROM shop WHERE shopCode = ?';
+  let data = await db.awaitQuery(test, req.body.shopCode);
+
+  if (data.length == 0) {
+    res.status(400).send({
+      success: false,
+      msg: "Class does not exist"
+    });
+  }
+
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
@@ -32,7 +42,7 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
         displayName: req.body.name,
         email: req.body.email,
         hashPass: hashedPassword,
-        shopId: 0,
+        shopId: data[0].shopId,
         userType: 0,
     };
 
