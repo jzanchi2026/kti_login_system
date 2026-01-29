@@ -187,7 +187,7 @@ routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
     db.release();
     return;
   }
-  
+
   let success = true;
   let msg = "";
 
@@ -349,6 +349,7 @@ routes.router.post('/forceReturnTool', routes.checkAdmin, async (req, res) => {
     return;
   }
   else if (data.takenBy == null) {
+    console.log(data.takenBy);
     res.status(403).send({
       success: false,
       msg: "Not taken out"
