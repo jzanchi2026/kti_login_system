@@ -349,7 +349,7 @@ routes.router.post('/forceReturnTool', routes.checkAdmin, async (req, res) => {
     return;
   }
   else if (data.takenBy == null) {
-    console.log(data.takenBy);
+    console.log(data);
     res.status(403).send({
       success: false,
       msg: "Not taken out"
