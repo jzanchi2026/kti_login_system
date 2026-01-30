@@ -171,6 +171,33 @@ routes.router.post('/checkoutMaterial', routes.checkAuthenticated, async (req, r
   db.release();
 })
 
+routes.router.post('/updateMaterialQuantity', routes.checkAdmin, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+
+  let test = 'SELECT * FROM material WHERE materialId = ? AND shopId = ?'
+  console.log(req.query.id)
+  let data = await db.awaitQuery(test, [req.query.id, req.user.shopId]);
+
+  if (data.length == 0) {
+    res.status(400).send({
+      success: false,
+      msg: "No such material found"
+    });
+  }
+  else {
+    let sql2 = 'UPDATE material SET currentAmount = ? WHERE materialId = ?';
+    await db.query(sql, [req.query.quantity, req.query.id], async (error, result) => {
+      if (error) {  
+        success = false;
+        msg = "An unexpected error has occured, make sure you passed in all fields correctly";
+        res.status(500).send({ success: success, msg: msg })
+      }
+    });
+  }
+
+  db.release();
+})
+
 routes.router.post('/returnMaterial', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
 
