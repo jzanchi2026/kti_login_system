@@ -31,7 +31,8 @@ routes.router.post('/createMaterialType', routes.checkAdmin, async (req, res) =>
   let material = {
       materialName: req.body.name,
       amount: req.body.quantity,
-      currentAmount: req.body.quantity
+      currentAmount: req.body.quantity,
+      shopId: req.user.shopId
   }
 
   console.log(material);
@@ -126,6 +127,7 @@ routes.router.post('/checkoutMaterial', routes.checkAuthenticated, async (req, r
     let material = {
       materialId: req.query.id,
       takenQuantity: req.query.quantity,
+      returnedQuantity: 0,  
       timeTaken: new Date().toISOString().slice(0, 19).replace('T', ' '),
       userId: req.user.userId
     }
@@ -187,7 +189,7 @@ routes.router.post('/returnMaterial', routes.checkAuthenticated, async (req, res
     let msg = "";
 
     await db.query(sql, [material, record], async (error, result) => {
-      if (error) {
+      if (error) {  
         success = false;
         msg = "An unexpected error has occured, make sure you passed in all fields correctly";
         res.status(500).send({ success: success, msg: msg })

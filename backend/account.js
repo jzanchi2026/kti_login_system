@@ -3,18 +3,23 @@ const passport = require('passport')
 const bcrypt = require('bcrypt')
 const pool = routes.pool;
 
-routes.router.post('/approval/', routes.checkAdmin, async (req, res) => {
-  let id = req.body.aproveid;
+routes.router.post('/approval', routes.checkAdmin, async (req, res) => {
+  let id = req.body.approveid;
 
   console.log(id);
 
-  let sql = 'UPDATE users SET userType = 1 WHERE userid = ?';
+  let sql = 'UPDATE users SET userType = 1 WHERE userId = ?';
   let db = await pool.awaitGetConnection();
+
   db.query(sql, id, (error, result) => {
-      if (error) throw error;
+    if (error) {
+      console.log(error);
+      res.json({success: false, error: error});
+    }
   });
+
   db.release()
-  res.redirect("/approval");
+  res.json({success: true, error: ""})
 })
 
 routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) => {
@@ -23,10 +28,11 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
 
     let sql = 'INSERT INTO users SET ?';
     let user = {
-        userId: Date.now().toString(),
+        userId: Date.now().toString(),    
         displayName: req.body.name,
         email: req.body.email,
         hashPass: hashedPassword,
+        shopId: 0,
         userType: 0,
     };
 
