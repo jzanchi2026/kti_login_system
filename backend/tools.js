@@ -155,7 +155,7 @@ routes.router.post('/tagTool', routes.checkAdmin, async (req, res) => {
 routes.router.delete('/removeTool', routes.checkAdmin, async (req, res) => {
 
   let db = await pool.awaitGetConnection();
-  let sql = "DELETE FROM singleTools WHERE toolId  = ?; DELETE FROM toolHistory WHERE toolId = ?;";
+  let sql = "DELETE FROM singleTools WHERE toolId  = ?;";
 
   let success = true;
   let msg = "";
