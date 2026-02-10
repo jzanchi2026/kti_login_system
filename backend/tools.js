@@ -253,3 +253,27 @@ routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) =>
 
   db.release();
 })
+
+routes.router.post('/editTool', routes.checkAdmin, async (req, res) => {
+
+  let db = await pool.awaitGetConnection();
+  let success = true;
+  let msg = "";
+
+  try {
+    let sql1 = "UPDATE singleTools SET toolName = ? WHERE toolId = ?";
+    await db.awaitQuery(sql1, [req.body.name, req.body.id]);
+
+    let sql2 = "UPDATE toolHistory SET toolName = ? WHERE toolId = ?";
+    await db.awaitQuery(sql2, [req.body.name, req.body.id]);
+
+    res.send({ success: success, msg: "Tool updated successfully" });
+  } catch (error) {
+    success = false;
+    msg = error.message;
+    res.send({ success: success, msg: msg });
+  }
+
+  db.release();
+})
+

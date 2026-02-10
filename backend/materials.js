@@ -209,3 +209,39 @@ routes.router.post('/returnMaterial', routes.checkAuthenticated, async (req, res
 
   db.release();
 })
+
+routes.router.post('/editMaterial', routes.checkAdmin, async (req, res) => {
+
+  let db = await pool.awaitGetConnection();
+  let success = true;
+  let msg = "";
+
+  try {
+    // Build update object with provided fields
+    let updateObj = {};
+    if (req.body.name) {
+      updateObj.materialName = req.body.name;
+    }
+    if (req.body.quantity !== undefined) {
+      updateObj.amount = req.body.quantity;
+    }
+
+    // Update material in material table
+    let sql1 = "UPDATE material SET ? WHERE materialId = ?";
+    await db.awaitQuery(sql1, [updateObj, req.body.id]);
+
+    // If name was updated, update all related history records
+    if (req.body.name) {
+      let sql2 = "UPDATE materialHistory SET materialName = ? WHERE materialId = ?";
+      await db.awaitQuery(sql2, [req.body.name, req.body.id]);
+    }
+
+    res.send({ success: success, msg: "Material updated successfully" });
+  } catch (error) {
+    success = false;
+    msg = error.message;
+    res.send({ success: success, msg: msg });
+  }
+
+  db.release();
+})
