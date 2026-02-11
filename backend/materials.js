@@ -310,6 +310,18 @@ routes.router.post('/editMaterial', routes.checkAdmin, async (req, res) => {
   let success = true;
   let msg = "";
 
+  let test = 'SELECT * FROM material WHERE materialId = ? AND shopId = ?'
+  let data = await db.awaitQuery(test, [req.query.id, req.user.userId]);
+
+  if (data.length == 0) {
+    res.status(400).send({
+      success: false,
+      msg: "Item not taken out by you"
+    });
+
+    return 0;
+  }
+
   try {
     // Build update object with provided fields
     let updateObj = {};
