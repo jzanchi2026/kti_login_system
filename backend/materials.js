@@ -217,7 +217,6 @@ routes.router.post('/editMaterial', routes.checkAdmin, async (req, res) => {
   let msg = "";
 
   try {
-    // Build update object with provided fields
     let updateObj = {};
     if (req.body.name) {
       updateObj.materialName = req.body.name;
@@ -225,12 +224,9 @@ routes.router.post('/editMaterial', routes.checkAdmin, async (req, res) => {
     if (req.body.quantity !== undefined) {
       updateObj.amount = req.body.quantity;
     }
-
-    // Update material in material table
     let sql1 = "UPDATE material SET ? WHERE materialId = ?";
     await db.awaitQuery(sql1, [updateObj, req.body.id]);
 
-    // If name was updated, update all related history records
     if (req.body.name) {
       let sql2 = "UPDATE materialHistory SET materialName = ? WHERE materialId = ?";
       await db.awaitQuery(sql2, [req.body.name, req.body.id]);
