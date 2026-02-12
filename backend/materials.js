@@ -310,7 +310,7 @@ routes.router.post('/editMaterial', routes.checkAdmin, async (req, res) => {
   let success = true;
   let msg = "";
 
-  let test = 'SELECT * FROM material WHERE materialId = ? AND shopId = ?'
+  let test = 'SELECT * FROM material WHERE materialId = ?'
   let data = await db.awaitQuery(test, [req.query.id, req.user.userId]);
 
   if (data.length == 0) {
@@ -332,7 +332,7 @@ routes.router.post('/editMaterial', routes.checkAdmin, async (req, res) => {
     }
     let sql1 = "UPDATE material SET ? WHERE materialId = ?";
     await db.awaitQuery(sql1, [updateObj, req.body.id]);
-    
+
     res.send({ success: success, msg: "Material updated successfully" });
   } catch (error) {
     success = false;
