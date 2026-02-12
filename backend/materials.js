@@ -332,12 +332,7 @@ routes.router.post('/editMaterial', routes.checkAdmin, async (req, res) => {
     }
     let sql1 = "UPDATE material SET ? WHERE materialId = ?";
     await db.awaitQuery(sql1, [updateObj, req.body.id]);
-
-    if (req.body.name) {
-      let sql2 = "UPDATE materialHistory SET materialName = ? WHERE materialId = ?";
-      await db.awaitQuery(sql2, [req.body.name, req.body.id]);
-    }
-
+    
     res.send({ success: success, msg: "Material updated successfully" });
   } catch (error) {
     success = false;
