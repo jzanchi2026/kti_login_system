@@ -4,7 +4,7 @@ const pool = routes.pool;
 // https://kti.com/getTool?id=1
 routes.router.get('/getTool', routes.checkAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let sql = 'SELECT * FROM singleTools WHERE toolID = ? and shopId = ?';
+  let sql = 'SELECT * FROM singleTools WHERE toolId = ? and shopId = ?';
 
   let data = await db.awaitQuery(sql, [req.query.id, req.user.shopId]);
   res.json(data[0])
@@ -244,7 +244,7 @@ routes.router.post('/checkoutTool', routes.checkAuthenticated, async (req, res) 
     return;
   }
 
-  let sql = 'UPDATE singleTools SET takenBy = ? WHERE toolID = ?';
+  let sql = 'UPDATE singleTools SET takenBy = ? WHERE toolId = ?';
 
   let success = true;
   let msg = "";
@@ -305,7 +305,7 @@ routes.router.post('/returnTool', routes.checkAuthenticated, async (req, res) =>
   }
 
 
-  let sql = "UPDATE singleTools SET takenBy = null WHERE toolID = ?";
+  let sql = "UPDATE singleTools SET takenBy = null WHERE toolId = ?";
 
   let success = true;
   let msg = "";
@@ -379,7 +379,7 @@ routes.router.post('/forceReturnTool', routes.checkAdmin, async (req, res) => {
   }
 
 
-  let sql = "UPDATE singleTools SET takenBy = null WHERE toolID = ?";
+  let sql = "UPDATE singleTools SET takenBy = null WHERE toolId = ?";
 
   let success = true;
   let msg = "";
