@@ -310,8 +310,8 @@ routes.router.post('/editMaterial', routes.checkAdmin, async (req, res) => {
   let success = true;
   let msg = "";
 
-  let test = 'SELECT * FROM material WHERE materialId = ?'
-  let data = await db.awaitQuery(test, [req.query.id, req.user.userId]);
+  let test = 'SELECT * FROM material WHERE materialId = ? AND shopId = ?'
+  let data = await db.awaitQuery(test, [req.query.id, req.user.shopId]);
 
   if (data.length == 0) {
     res.status(400).send({
