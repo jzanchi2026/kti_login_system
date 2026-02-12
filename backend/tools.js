@@ -342,9 +342,6 @@ routes.router.post('/editTool', routes.checkAdmin, async (req, res) => {
     let sql1 = "UPDATE singleTools SET toolName = ? WHERE toolId = ?";
     await db.awaitQuery(sql1, [req.body.name, req.body.id]);
 
-    let sql2 = "UPDATE toolHistory SET toolName = ? WHERE toolId = ?";
-    await db.awaitQuery(sql2, [req.body.name, req.body.id]);
-
     res.send({ success: success, msg: "Tool updated successfully" });
   } catch (error) {
     success = false;
