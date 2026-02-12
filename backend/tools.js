@@ -338,6 +338,18 @@ routes.router.post('/editTool', routes.checkAdmin, async (req, res) => {
   let success = true;
   let msg = "";
 
+  let test = 'SELECT * FROM singleTools WHERE toolId = ? AND shopId = ?'
+  let data = await db.awaitQuery(test, [req.body.id, req.user.shopId]);
+
+  if (data.length == 0) {
+    res.status(400).send({
+      success: false,
+      msg: "Item not taken out by you"
+    });
+
+    return 0;
+  }
+
   try {
     let sql1 = "UPDATE singleTools SET toolName = ? WHERE toolId = ?";
     await db.awaitQuery(sql1, [req.body.name, req.body.id]);
