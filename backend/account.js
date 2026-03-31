@@ -126,10 +126,11 @@ routes.router.post('/createClass', routes.checkAdmin, async (req, res) => {
   let db;
   try {
     db = await pool.awaitGetConnection();
-    let sql = 'INSERT INTO idClass SET ?';
+    let sql = 'INSERT INTO idClass SET ? AND classCode = ?';
     let cls = {
       className: req.body.name,
-      shopId: req.user.shopId
+      shopId: req.user.shopId,
+      classCode: req.body.classCode
     };
 
     const result = await db.awaitQuery(sql, cls);
@@ -174,18 +175,4 @@ routes.router.post('/assignStudentToClass', routes.checkAdmin, async (req, res) 
   } finally {
     if (db) db.release();
   } 
-})
-routes.router.post('/changeClassCode', routes.checkAdmin, async (req, res) => {
-  let db;
-  try {
-    db = await pool.awaitGetConnection();
-    let sql = 'UPDATE idClass SET classCode = ? WHERE classId = ? AND shopId = ?';
-    const result = await db.awaitQuery(sql, [req.body.classCode, req.body.classId, req.user.shopId]);
-    res.json({ success: true, msg: '', insertId: result && result.insertId ? result.insertId : null });
-  } catch (err) {
-    console.error('Error changing class code:', err);
-    res.status(500).json({ success: false, msg: String(err) });
-  } finally {
-    if (db) db.release();
-  }
 })
