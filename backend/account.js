@@ -126,7 +126,7 @@ routes.router.post('/createClass', routes.checkAdmin, async (req, res) => {
   let db;
   try {
     db = await pool.awaitGetConnection();
-    let sql = 'INSERT INTO idClass SET ? AND classCode = ?';
+    let sql = 'INSERT INTO idClass SET ?';
     let cls = {
       className: req.body.name,
       shopId: req.user.shopId,
