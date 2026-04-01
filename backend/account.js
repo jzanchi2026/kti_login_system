@@ -24,7 +24,7 @@ routes.router.post('/approval', routes.checkAdmin, async (req, res) => {
 
 routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let test = 'SELECT shopId FROM idClass WHERE classCode = ?';
+  let test = 'SELECT shopId, classId FROM idClass WHERE classCode = ?';
   let data = await db.awaitQuery(test, req.body.classCode);
 
   if (data.length == 0) {
@@ -46,6 +46,7 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
         email: req.body.email,
         hashPass: hashedPassword,
         shopId: data[0].shopId,
+        classId: data[0].classId,
         userType: 0,
     };
 
