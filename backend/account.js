@@ -23,6 +23,7 @@ routes.router.post('/approval', routes.checkAdmin, async (req, res) => {
 })
 
 routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
   let test = 'SELECT shopId FROM shop WHERE shopCode = ?';
   let data = await db.awaitQuery(test, req.body.shopCode);
 
@@ -46,7 +47,6 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
         userType: 0,
     };
 
-    let db = await pool.awaitGetConnection();
     await db.query(sql, user, (error, result) => {
         if (error) {
           console.log(error);
