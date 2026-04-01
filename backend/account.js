@@ -24,14 +24,16 @@ routes.router.post('/approval', routes.checkAdmin, async (req, res) => {
 
 routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let test = 'SELECT shopId FROM shop WHERE shopCode = ?';
-  let data = await db.awaitQuery(test, req.body.shopCode);
+  let test = 'SELECT shopId FROM idClass WHERE classCode = ?';
+  let data = await db.awaitQuery(test, req.body.classCode);
 
   if (data.length == 0) {
     res.status(400).send({
       success: false,
       msg: "Class does not exist"
     });
+    db.release();
+    return;
   }
 
   try {
@@ -50,7 +52,6 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
     await db.query(sql, user, (error, result) => {
         if (error) {
           console.log(error);
-          res.json({success: false, error: error})
           throw error;
         }
     });
