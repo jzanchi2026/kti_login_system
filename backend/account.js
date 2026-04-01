@@ -130,7 +130,8 @@ routes.router.post('/createClass', routes.checkAdmin, async (req, res) => {
     let sql = 'INSERT INTO idClass SET ?';
     let cls = {
       className: req.body.name,
-      shopId: req.user.shopId
+      shopId: req.user.shopId,
+      classCode: req.body.classCode
     };
 
     const result = await db.awaitQuery(sql, cls);
