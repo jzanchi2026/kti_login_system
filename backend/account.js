@@ -50,6 +50,7 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
     await db.query(sql, user, (error, result) => {
         if (error) {
           console.log(error);
+          res.json({success: false, error: error})
           throw error;
         }
     });
