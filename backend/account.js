@@ -22,19 +22,57 @@ routes.router.post('/approval', routes.checkAdmin, async (req, res) => {
   res.json({success: true, error: ""})
 })
 
+routes.router.post('/setAdmin', routes.checkAdmin, async (req, res) => {
+  let id = req.body.approveid;
+
+  console.log(id);
+
+  let sql = 'UPDATE users SET userType = 2 WHERE userId = ? AND shopId = ?';
+  let db = await pool.awaitGetConnection();
+
+  db.query(sql, [id, req.user.shopId], (error, result) => {
+    if (error) {
+      console.log(error);
+      res.json({success: false, error: error});
+    }
+  });
+
+  db.release()
+  res.json({success: true, error: ""})
+})
+
 routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) => {
   let db = await pool.awaitGetConnection();
-  let test = 'SELECT shopId, classId FROM idClass WHERE classCode = ?';
-  let data = await db.awaitQuery(test, req.body.classCode);
+  let data = [];
 
-  if (data.length == 0) {
-    res.status(400).send({
-      success: false,
-      msg: "Class does not exist"
-    });
-    db.release();
-    return;
+  if (req.body.classCode) {
+    let test = 'SELECT shopId, classId FROM idClass WHERE classCode = ?';
+    data = await db.awaitQuery(test, req.body.classCode);
+
+    if (data.length == 0) {
+      res.status(400).send({
+        success: false,
+        msg: "Class does not exist"
+      });
+      db.release();
+      return;
+    }
   }
+
+    if (req.body.classCode) {
+    let test = 'SELECT shopId FROM shop WHERE shopCode = ?';
+    let data = await db.awaitQuery(test, req.body.shopCode);
+
+    if (data.length == 0) {
+      res.status(400).send({
+        success: false,
+        msg: "Class does not exist"
+      });
+      db.release();
+      return;
+    }
+  }
+
 
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
@@ -108,10 +146,22 @@ routes.router.post('/registerAdminAccount', routes.checkNotAuthenticated, async 
     });
     db.release()
 
-    res.json({success: true, error: ""})
+    res.json({success: true, error: "", shopCode: rString})
   } catch (e) {
-    res.json({success: false, error: e})
+    res.json({success: false, error: e, shopCode: ""})
   } 
+})
+
+routes.router.get("/shop", routes.checkAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+
+  let sql = 'SELECT * FROM shop WHERE shopId = ?';
+
+  let data = await db.awaitQuery(sql, req.user.shopId);
+  res.json(data)
+
+  db.release();
+
 })
 
 
