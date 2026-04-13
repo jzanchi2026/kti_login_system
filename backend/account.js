@@ -64,6 +64,57 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
   } 
 })
 
+function randomString(length, chars) {
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
+}
+
+routes.router.post('/registerAdminAccount', routes.checkNotAuthenticated, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10)
+
+    let rString = randomString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
+    let shopSql = 'INSERT INTO shop SET ?';
+    let shop = {
+      shopName: req.body.shopName,
+      shopCode: rString
+    }
+
+    await db.query(shopSql, shop, (error, result) => {
+        if (error) {
+          console.log(error);
+          throw error;
+        }
+    });
+
+    let sql = 'INSERT INTO users SET ?';
+    let user = {
+        userId: Date.now().toString(),    
+        displayName: req.body.name,
+        email: req.body.email,
+        hashPass: hashedPassword,
+        shopId: data[0].shopId,
+        userType: 0,
+    };
+
+    await db.query(sql, user, (error, result) => {
+        if (error) {
+          console.log(error);
+          throw error;
+        }
+    });
+    db.release()
+
+    res.json({success: true, error: ""})
+  } catch (e) {
+    res.json({success: false, error: e})
+  } 
+})
+
+
 routes.router.get('/logout', routes.checkAuthenticated, async (req, res, next) => {
   req.logOut((err) => {
       if (err) {
@@ -164,6 +215,38 @@ routes.router.get('/getUsers', routes.checkAdmin, async (req, res) => {
   res.json(admins)
   db.release();
 })
+
+routes.router.delete('/removeClass', routes.checkAdmin, async (req, res) => {
+  let db = await pool.awaitGetConnection();
+
+  let sql = "DELETE FROM idClass WHERE classId  = ?";
+  let test = 'SELECT * FROM idClass WHERE classId = ? AND shopId = ?'
+
+  let data = await db.awaitQuery(test, [req.query.id, req.user.shopId]);
+
+  if (data.length == 0) {
+    res.status(400).send({
+      success: false,
+      msg: "No such class found"
+    });
+
+    db.release();
+    return;
+  }
+
+  let success = true;
+  let msg = "";
+
+  await db.query(sql, [req.query.id, req.query.id], (error, result) => {
+      if (error) {
+          success = false;
+          msg = error;
+      }
+      res.send({ success: success, msg: msg })
+  });
+  db.release();
+})
+
 
 routes.router.post('/assignStudentToClass', routes.checkAdmin, async (req, res) => {
   let db;
