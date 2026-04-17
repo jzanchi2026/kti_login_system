@@ -128,7 +128,7 @@ routes.router.post('/registerAdminAccount', routes.checkNotAuthenticated, async 
     });
 
     let test = 'SELECT shopId FROM shop WHERE shopCode = ?';
-    let data = await db.awaitQuery(test, req.body.shopCode);
+    let data = await db.awaitQuery(test, rString);
 
     if (data.length == 0) {
       res.status(400).send({
