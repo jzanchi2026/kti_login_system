@@ -123,7 +123,6 @@ routes.router.post('/registerAdminAccount', routes.checkNotAuthenticated, async 
 
     await db.query(shopSql, shop, (error, result) => {
         if (error) {
-          console.log(error);
           throw error;
         }
     });
@@ -140,8 +139,6 @@ routes.router.post('/registerAdminAccount', routes.checkNotAuthenticated, async 
 
     await db.query(sql, user, (error, result) => {
         if (error) {
-          console.log("test");
-          console.log(error);
           throw error;
         }
     });
@@ -149,6 +146,7 @@ routes.router.post('/registerAdminAccount', routes.checkNotAuthenticated, async 
 
     res.json({success: true, error: "", shopCode: rString})
   } catch (e) {
+    console.log(e);
     res.json({success: false, error: e, shopCode: ""})
   } 
 })
