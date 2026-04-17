@@ -59,14 +59,14 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
     }
   }
 
-    if (req.body.shopCode) {
+  if (req.body.shopCode) {
     let test = 'SELECT shopId FROM shop WHERE shopCode = ?';
     let data = await db.awaitQuery(test, req.body.shopCode);
 
     if (data.length == 0) {
       res.status(400).send({
         success: false,
-        msg: "Class does not exist"
+        msg: "Shop does not exist"
       });
       db.release();
       return;
@@ -87,6 +87,18 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
         classId: data[0].classId,
         userType: 0,
     };
+
+    let test = 'SELECT shopId FROM shop WHERE shopCode = ?';
+    let data = await db.awaitQuery(test, req.body.shopCode);
+
+    if (data.length == 0) {
+      res.status(400).send({
+        success: false,
+        msg: "Shop does not exist"
+      });
+      db.release();
+      return;
+    }
 
     await db.query(sql, user, (error, result) => {
         if (error) {
@@ -126,6 +138,8 @@ routes.router.post('/registerAdminAccount', routes.checkNotAuthenticated, async 
           throw error;
         }
     });
+
+    
 
     let sql = 'INSERT INTO users SET ?';
     let user = {
