@@ -88,18 +88,6 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
         userType: 0,
     };
 
-    let test = 'SELECT shopId FROM shop WHERE shopCode = ?';
-    let data = await db.awaitQuery(test, req.body.shopCode);
-
-    if (data.length == 0) {
-      res.status(400).send({
-        success: false,
-        msg: "Shop does not exist"
-      });
-      db.release();
-      return;
-    }
-
     await db.query(sql, user, (error, result) => {
         if (error) {
           console.log(error);
@@ -139,7 +127,17 @@ routes.router.post('/registerAdminAccount', routes.checkNotAuthenticated, async 
         }
     });
 
-    
+    let test = 'SELECT shopId FROM shop WHERE shopCode = ?';
+    let data = await db.awaitQuery(test, req.body.shopCode);
+
+    if (data.length == 0) {
+      res.status(400).send({
+        success: false,
+        msg: "Shop does not exist"
+      });
+      db.release();
+      return;
+    }
 
     let sql = 'INSERT INTO users SET ?';
     let user = {
