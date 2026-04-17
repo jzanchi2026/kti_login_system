@@ -59,7 +59,7 @@ routes.router.post('/register', routes.checkNotAuthenticated, async (req, res) =
     }
   }
 
-    if (req.body.classCode) {
+    if (req.body.shopCode) {
     let test = 'SELECT shopId FROM shop WHERE shopCode = ?';
     let data = await db.awaitQuery(test, req.body.shopCode);
 
