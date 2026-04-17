@@ -135,11 +135,12 @@ routes.router.post('/registerAdminAccount', routes.checkNotAuthenticated, async 
         email: req.body.email,
         hashPass: hashedPassword,
         shopId: data[0].shopId,
-        userType: 0,
+        userType: 2,
     };
 
     await db.query(sql, user, (error, result) => {
         if (error) {
+          console.log("test");
           console.log(error);
           throw error;
         }
